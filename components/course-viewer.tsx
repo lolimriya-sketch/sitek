@@ -25,9 +25,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
   const router = useRouter()
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const bgImgRef = useRef<HTMLImageElement | null>(null)
   const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null)
-  const [scale, setScale] = useState(1)
   const [startTime] = useState<number>(Date.now())
   const [tabExits, setTabExits] = useState(0)
   const [progressId, setProgressId] = useState<string | null>(null)
@@ -36,7 +34,6 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
   const [tooltipContent, setTooltipContent] = useState<string | null>(null)
   const [completedHotspots, setCompletedHotspots] = useState<Set<string>>(new Set())
   const [inputValues, setInputValues] = useState<Record<string, string>>({})
-  const [surveySelections, setSurveySelections] = useState<Record<string, Set<string>>>({})
   const [showPresentation, setShowPresentation] = useState<{ elementId: string; url: string } | null>(null)
   const [transitionButtonClicked, setTransitionButtonClicked] = useState(false)
   const [animatedTooltip, setAnimatedTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
@@ -82,32 +79,12 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
     }
   }, [userId, course.id, startTime])
 
-  // measure canvas size and calculate dimensions to fit viewport
+  // measure canvas size for percent->px conversion
   useEffect(() => {
     function measure() {
-      if (!containerRef.current) return
-      
-      // Get available space in viewport
-      const availableHeight = window.innerHeight - 220 // account for header/footer controls
-      const availableWidth = window.innerWidth - 40 // small margin
-      
-      // Get natural image dimensions from scene or use defaults
-      const naturalW = (currentScene as any)?.screenshotNaturalWidth || 800
-      const naturalH = (currentScene as any)?.screenshotNaturalHeight || 600
-      
-      // Calculate dimensions to fit both width and height without distortion
-      const ratioByWidth = availableWidth / naturalW
-      const ratioByHeight = availableHeight / naturalH
-      const fitRatio = Math.min(ratioByWidth, ratioByHeight, 1) // don't enlarge beyond natural size
-      
-      // Calculate actual display dimensions (not scaled transform, but actual size)
-      const displayW = Math.round(naturalW * fitRatio)
-      const displayH = Math.round(naturalH * fitRatio)
-      
-      setScale(fitRatio)
-      setCanvasSize({ width: displayW, height: displayH })
+      const rect = containerRef.current?.getBoundingClientRect()
+      if (rect) setCanvasSize({ width: rect.width, height: rect.height })
     }
-    
     measure()
     window.addEventListener("resize", measure)
     return () => window.removeEventListener("resize", measure)
@@ -220,62 +197,6 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
     }
   }
 
-  async function handleSurveySubmit(element: SceneElement) {
-    // gather selected ids for this element
-    const selected = Array.from(surveySelections[element.id] || [])
-    const correctChoices = (element.data.choices || []).filter((c: any) => c.correct).map((c: any) => c.id)
-
-    const eq = (a: string[], b: string[]) => {
-      if (a.length !== b.length) return false
-      const sa = new Set(a)
-      return b.every((x) => sa.has(x))
-    }
-
-    const isCorrect = eq(selected, correctChoices)
-    await trackInteraction(element.id, element.type, "submit", { selected, isCorrect })
-
-    if (isCorrect) {
-      // proceed to next scene (or complete)
-      if (!isLastScene) {
-        setCurrentSceneIndex(currentSceneIndex + 1)
-        setCompletedHotspots(new Set())
-        setInputValues({})
-        setSurveySelections({})
-      } else {
-        handleComplete()
-      }
-      return
-    }
-
-    // wrong answer
-    if (element.data.failOnWrong) {
-      // mark progress as failed
-      if (progressId) {
-        try {
-          const duration = Math.floor((Date.now() - startTime) / 1000)
-          const res = await fetch('/api/progress')
-          const list = res.ok ? await res.json() : []
-          const updated = (list || []).map((p: any) =>
-            p.id === progressId ? { ...p, completedAt: new Date().toISOString(), duration, tabExits, status: 'failed' } : p,
-          )
-          await fetch('/api/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ progress: updated }),
-          })
-        } catch (err) {
-          // ignore
-        }
-      }
-      // redirect to courses list (failed)
-      router.push('/dashboard/courses')
-    } else {
-      // allow retry: show a small animation/tooltip
-      // (simple: flash tooltip)
-      setTimeout(() => {}, 300)
-    }
-  }
-
   async function handleInputChange(elementId: string, value: string) {
     setInputValues({ ...inputValues, [elementId]: value })
     await trackInteraction(elementId, "input", "input-change", value)
@@ -318,107 +239,66 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <div className="border-b bg-card p-4">
-        <div className="flex items-center justify-between mb-4">
-          <Link href="/dashboard/courses">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Назад
-            </Button>
-          </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>{formatTime(elapsedTime)}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {isTabActive ? <Eye className="h-4 w-4 text-green-500" /> : <EyeOff className="h-4 w-4 text-destructive" />}
-              <span className="text-xs text-muted-foreground">Виходи: {tabExits}</span>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Сцена {currentSceneIndex + 1} / {totalScenes}
-            </div>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <Link href="/dashboard/courses">
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Назад
+          </Button>
+        </Link>
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            <span>{formatTime(elapsedTime)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {isTabActive ? <Eye className="h-4 w-4 text-green-500" /> : <EyeOff className="h-4 w-4 text-destructive" />}
+            <span className="text-xs text-muted-foreground">Виходи: {tabExits}</span>
           </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold mb-2">{course.title}</h1>
-          <Progress value={progress} className="h-2" />
+        <div className="text-sm text-muted-foreground">
+          Сцена {currentSceneIndex + 1} / {totalScenes}
         </div>
       </div>
 
-      {/* Canvas - fit to viewport without scroll */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden bg-muted p-4">
-        {currentScene && (
-          <div
-            ref={containerRef}
-            className="relative bg-white shadow-lg"
-            style={{
-              width: `${canvasSize?.width || 800}px`,
-              height: `${canvasSize?.height || 600}px`,
-              overflow: 'hidden',
-            }}
-          >
+      <div>
+        <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+        <Progress value={progress} className="h-2" />
+      </div>
+
+      {currentScene && (
+        <Card className="p-0 overflow-hidden">
+          <div ref={containerRef} className="relative bg-muted" style={{ minHeight: "600px" }}>
             {/* Scene background/screenshot */}
             {currentScene.screenshot && (
               <img
-                ref={bgImgRef}
                 src={currentScene.screenshot || "/placeholder.svg"}
                 alt={currentScene.name}
                 onLoad={(e) => handleBackgroundImageLoad(e.currentTarget)}
-                className="absolute left-0 top-0 w-full h-full pointer-events-none"
-                style={{ objectFit: "contain", objectPosition: "center" }}
+                className="absolute left-0 w-full pointer-events-none"
+                style={{ height: canvasSize ? `${canvasSize.height}px` : "100%", objectFit: "cover" }}
               />
             )}
 
             {currentScene.elements.map((element, idx) => {
-              // Canvas dimensions at natural (non-scaled) size
-              const naturalW = (currentScene as any)?.screenshotNaturalWidth || 800
-              const naturalH = (currentScene as any)?.screenshotNaturalHeight || 600
-              
-              // Get element position/size - use px fields directly (no percent)
-              const naturalLeft = (element.position as any)?.x ?? 0
-              const naturalTop = (element.position as any)?.y ?? 0
-              const naturalWidth = (element.size as any)?.width ?? 0
-              const naturalHeight = (element.size as any)?.height ?? 0
-
-              // Determine displayed image rect inside container (account for object-fit: contain)
-              let imgLeft = 0
-              let imgTop = 0
-              let imgW = canvasSize?.width || naturalW
-              let imgH = canvasSize?.height || naturalH
-              try {
-                const containerRect = containerRef.current?.getBoundingClientRect()
-                const imgRect = bgImgRef.current?.getBoundingClientRect()
-                if (imgRect && containerRect) {
-                  imgLeft = imgRect.left - containerRect.left
-                  imgTop = imgRect.top - containerRect.top
-                  imgW = imgRect.width
-                  imgH = imgRect.height
-                }
-              } catch (e) {
-                // ignore
-              }
-
-              // Use uniform scale (min of both axes) to preserve aspect ratio and prevent distortion
-              const scaleX = imgW / naturalW || 1
-              const scaleY = imgH / naturalH || 1
-              const scale = Math.min(scaleX, scaleY)
-
-              const left = Math.round(imgLeft + naturalLeft * scale)
-              const top = Math.round(imgTop + naturalTop * scale)
-              const width = Math.round(naturalWidth * scale)
-              const height = Math.round(naturalHeight * scale)
+              const canvasW = canvasSize?.width || 800
+              const canvasH = canvasSize?.height || 600
+              const posPerc = (element as any).positionPercent
+              const sizePerc = (element as any).sizePercent
+              const left = posPerc ? Math.round((posPerc.x / 100) * canvasW) : element.position?.x || 0
+              const top = posPerc ? Math.round((posPerc.y / 100) * canvasH) : element.position?.y || 0
+              const width = sizePerc ? Math.round((sizePerc.width / 100) * canvasW) : element.size?.width || 0
+              const height = sizePerc ? Math.round((sizePerc.height / 100) * canvasH) : element.size?.height || 0
 
               // debug: log first element computed positions to compare with editor
               if (idx === 0) {
                 // eslint-disable-next-line no-console
-                console.debug("[viewer] first element computed", { id: element.id, scale, left, top, width, height, naturalW, naturalH })
+                console.debug("[viewer] first element computed", { id: element.id, left, top, width, height, canvasW, canvasH })
               }
 
               return (
-              <div
+                <div
                 key={element.id}
                 className={`absolute ${element.type !== "input" ? "cursor-pointer" : ""} transition-all ${element.type === "button" ? "hover:scale-105" : ""}`}
                 style={{
@@ -434,24 +314,22 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                   <div
                     className="w-full h-full p-2 rounded shadow-lg"
                     style={{
-                      fontSize: `${Math.round(((element.data as any).fontSize || 16) * scale)}px`,
+                      fontSize: `${element.data.fontSize}px`,
                       color: element.data.color,
                       backgroundColor: element.data.backgroundColor,
-                      overflow: 'hidden',
                     }}
                   >
                     {element.data.text}
                   </div>
                 )}
 
-                  {element.type === "image" && element.data.url && (
-                    <img
-                      src={element.data.url || "/placeholder.svg"}
-                      alt=""
-                      className="w-full h-full object-contain rounded shadow-lg"
-                      style={{ objectPosition: "center" }}
-                    />
-                  )}
+                {element.type === "image" && element.data.url && (
+                  <img
+                    src={element.data.url || "/placeholder.svg"}
+                    alt=""
+                    className="w-full h-full object-cover rounded shadow-lg"
+                  />
+                )}
 
                 {element.type === "video" && element.data.url && (
                   <video
@@ -463,58 +341,45 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                 )}
 
                 {element.type === "button" && (
-                  <div
-                    className="w-full h-full rounded font-medium shadow-lg pointer-events-auto"
+                  <Button
+                    size="lg"
+                    className="w-full h-full text-lg shadow-lg"
                     style={{
                       backgroundColor: element.data.backgroundColor,
                       color: element.data.textColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontSize: `${Math.round(((element.data as any).fontSize || 16) * scale)}px`,
-                      lineHeight: `${height}px`,
-                      userSelect: 'none',
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleElementClick(element, e as unknown as React.MouseEvent)
                     }}
                   >
                     {element.data.label}
-                  </div>
+                  </Button>
                 )}
 
                 {element.type === "input" && (
                   <div className="w-full h-full">
                     {element.data.multiline ? (
-                      <textarea
+                      <Textarea
                         placeholder={element.data.placeholder}
                         value={inputValues[element.id] || ""}
                         onChange={(e) => handleInputChange(element.id, e.target.value)}
                         required={element.data.required}
-                        className="w-full h-full shadow-lg resize-none border rounded px-2"
-                        style={{ fontSize: `${Math.round(((element.data as any).fontSize || 14) * scale)}px`, padding: `${Math.max(4, Math.round(6 * scale))}px` }}
+                        className="w-full h-full shadow-lg resize-none"
                       />
                     ) : (
-                      <input
+                      <Input
                         placeholder={element.data.placeholder}
                         value={inputValues[element.id] || ""}
                         onChange={(e) => handleInputChange(element.id, e.target.value)}
                         required={element.data.required}
-                        className="w-full h-full shadow-lg border rounded px-2"
-                        style={{ fontSize: `${Math.round(((element.data as any).fontSize || 14) * scale)}px`, padding: `${Math.max(4, Math.round(6 * scale))}px` }}
+                        className="w-full h-full shadow-lg"
                       />
                     )}
                   </div>
                 )}
 
                 {element.type === "presentation" && (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-white border-2 border-gray-300 rounded shadow-lg hover:bg-gray-50 transition-colors" style={{ gap: '6px' }}>
-                    <Presentation className="" style={{ width: Math.round(Math.min(width, height) * 0.5), height: Math.round(Math.min(width, height) * 0.5), color: '#0EA5A4' }} />
-                    <span className="text-sm font-medium text-center px-2" style={{ fontSize: `${Math.max(10, Math.round(12 * scale))}px` }}>{element.data.fileName}</span>
-                    <span className="text-xs text-muted-foreground mt-1" style={{ fontSize: `${Math.max(9, Math.round(10 * scale))}px` }}>Клікніть для перегляду</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-white border-2 border-gray-300 rounded shadow-lg hover:bg-gray-50 transition-colors">
+                    <Presentation className="h-12 w-12 text-primary mb-2" />
+                    <span className="text-sm font-medium text-center px-2">{element.data.fileName}</span>
+                    <span className="text-xs text-muted-foreground mt-1">Клікніть для перегляду</span>
                   </div>
                 )}
 
@@ -525,71 +390,13 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                     }`}
                     style={{ backgroundColor: element.data.pulseColor + "40" }}
                   >
-                    <Target className="" style={{ width: Math.round(Math.min(width, height) * 0.6), height: Math.round(Math.min(width, height) * 0.6), color: element.data.pulseColor }} />
-                  </div>
-                )}
-
-                {element.type === "survey" && (
-                  <div className="w-full h-full bg-white rounded shadow-md p-4 flex flex-col justify-between">
-                    <div>
-                      <p className="font-semibold mb-2">{element.data.question}</p>
-                      <div className="space-y-2">
-                        {(element.data.choices || []).map((ch: any) => {
-                          const selectedSet = surveySelections[element.id] || new Set<string>()
-                          const checked = selectedSet.has(ch.id)
-                          if (element.data.multiple) {
-                            return (
-                              <label key={ch.id} className="inline-flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={checked}
-                                  onChange={() => {
-                                    const prev = new Set(surveySelections[element.id] || [])
-                                    if (prev.has(ch.id)) prev.delete(ch.id)
-                                    else prev.add(ch.id)
-                                    setSurveySelections({ ...surveySelections, [element.id]: prev })
-                                  }}
-                                />
-                                <span>{ch.text}</span>
-                              </label>
-                            )
-                          }
-                          return (
-                            <label key={ch.id} className="inline-flex items-center gap-2">
-                              <input
-                                type="radio"
-                                name={`survey-${element.id}`}
-                                checked={checked}
-                                onChange={() => setSurveySelections({ ...surveySelections, [element.id]: new Set([ch.id]) })}
-                              />
-                              <span>{ch.text}</span>
-                            </label>
-                          )
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex justify-end">
-                      <div
-                        role="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleSurveySubmit(element)
-                        }}
-                        className="rounded px-3 py-2 bg-primary text-white cursor-pointer"
-                        style={{ fontSize: `${Math.round(((element.data as any).fontSize || 14) * scale)}px` }}
-                      >
-                        Відправити
-                      </div>
-                    </div>
+                    <Target className="h-8 w-8" style={{ color: element.data.pulseColor }} />
                   </div>
                 )}
 
                 {element.type === "arrow" && (
                   <div className="w-full h-full flex items-center justify-center pointer-events-none">
-                    <div style={{ width: Math.round(Math.min(width, height) * 0.6), height: Math.round(Math.min(width, height) * 0.6) }}>
-                      <ArrowIcon className="w-full h-full" color={(element.data as any).color} thickness={(element.data as any).thickness} />
-                    </div>
+                    <ArrowIcon className="h-8 w-8" color={(element.data as any).color} thickness={(element.data as any).thickness} />
                   </div>
                 )}
 
@@ -599,7 +406,6 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                     style={{
                       backgroundColor: element.data.backgroundColor,
                       color: element.data.textColor,
-                      fontSize: `${Math.round(((element.data as any).fontSize || 14) * scale)}px`,
                     }}
                   >
                     {element.data.text}
@@ -623,11 +429,10 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
               </div>
             )}
           </div>
-        )}
-      </div>
+        </Card>
+      )}
 
-      {/* Footer Controls */}
-      <div className="border-t bg-card p-4 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <Button
           variant="outline"
           onClick={() => {

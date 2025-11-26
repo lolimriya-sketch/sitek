@@ -49,7 +49,6 @@ type ElementType =
   | "button"
   | "input"
   | "presentation"
-  | "survey"
 
 export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
   const router = useRouter()
@@ -63,7 +62,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
-  const bgImgRef = useRef<HTMLImageElement | null>(null)
   const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null)
   const [visibleRows, setVisibleRows] = useState<Set<number>>(new Set([1, 2, 3]))
 
@@ -88,15 +86,28 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
   async function handleSave() {
     if (!course) return
     setSaving(true)
-    // Save scenes with px-only coordinates (no percent conversion)
-    const scenesForSave = course.scenes.map((scene) => ({
-      ...scene,
-      elements: scene.elements.map((el) => ({
-        ...el,
-        position: el.position || { x: 0, y: 0 },
-        size: el.size || { width: 0, height: 0 },
-      })),
-    }))
+    // prepare scenes with percent-based positions/sizes so they scale with the background
+    const rect = canvasRef.current?.getBoundingClientRect()
+    const canvasW = rect?.width || canvasSize?.width || 800
+    const canvasH = rect?.height || canvasSize?.height || 600
+
+    const scenesForSave = course.scenes.map((scene) => {
+      const elements = scene.elements.map((el) => {
+        const pos = el.position || { x: 0, y: 0 }
+        const size = el.size || { width: 0, height: 0 }
+        const positionPercent = { x: Math.round((pos.x / canvasW) * 100), y: Math.round((pos.y / canvasH) * 100) }
+        const sizePercent = { width: Math.round((size.width / canvasW) * 100), height: Math.round((size.height / canvasH) * 100) }
+        const cleaned = { ...el }
+        // store percent fields for persistence
+        ;(cleaned as any).positionPercent = positionPercent
+        ;(cleaned as any).sizePercent = sizePercent
+        // remove px fields to avoid duplication
+        delete (cleaned as any).position
+        delete (cleaned as any).size
+        return cleaned
+      })
+      return { ...scene, elements }
+    })
 
     try {
       // API expects { id, updates }
@@ -181,30 +192,47 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
   }
 
   function handleBackgroundImageLoad(img: HTMLImageElement) {
-    // Use NATURAL image dimensions as the canonical base for percent calculations
-    // This ensures coordinates are STABLE regardless of container size
-    const naturalW = img.naturalWidth || 800
+    // determine canvas display size based on container width and image natural aspect
+    const rect = canvasRef.current?.getBoundingClientRect()
+    const containerWidth = rect?.width || img.naturalWidth || 800
+    const naturalW = img.naturalWidth || containerWidth
     const naturalH = img.naturalHeight || Math.round(naturalW * 0.6)
-    
-    // Set canvas size to natural dimensions (so 1% = 1 pixel in the image)
-    setCanvasSize({ width: naturalW, height: naturalH })
+    const height = Math.round((containerWidth * naturalH) / naturalW)
+  setCanvasSize({ width: containerWidth, height })
 
-    // store natural image dimensions on the scene
-    try {
-      updateScene(currentSceneIndex, { screenshotNaturalWidth: naturalW, screenshotNaturalHeight: naturalH } as any)
-    } catch (err) {
-      // ignore: best-effort metadata attach
-    }
+  // store natural image dimensions on the scene so exports include them
+  // (these are the image's intrinsic pixel dimensions)
+  try {
+    updateScene(currentSceneIndex, { screenshotNaturalWidth: naturalW, screenshotNaturalHeight: naturalH } as any)
+  } catch (err) {
+    // ignore: best-effort metadata attach
+  }
 
-    // debug: print canvas size for diagnostics
-    // eslint-disable-next-line no-console
-    console.debug("[editor] handleBackgroundImageLoad", { courseId: course.id, naturalW, naturalH })
+  // debug: print canvas size for diagnostics
+  // eslint-disable-next-line no-console
+  console.debug("[editor] handleBackgroundImageLoad", { courseId: course.id, containerWidth, naturalW, naturalH, height })
 
-    // convert any percent-stored positions/sizes into px for editing (relative to natural dims)
+    // convert any percent-stored positions/sizes into px for editing
     const scene = course.scenes[currentSceneIndex]
     if (!scene) return
-    // No conversion needed - elements already have px coordinates
-    updateScene(currentSceneIndex, { elements: scene.elements })
+    const updated = scene.elements.map((el) => {
+      const posPerc = (el as any).positionPercent
+      const sizePerc = (el as any).sizePercent
+      if (posPerc || sizePerc) {
+        const newPos = posPerc
+          ? { x: Math.round((posPerc.x / 100) * containerWidth), y: Math.round((posPerc.y / 100) * height) }
+          : el.position
+        const newSize = sizePerc
+          ? {
+              width: Math.round((sizePerc.width / 100) * containerWidth),
+              height: Math.round((sizePerc.height / 100) * height),
+            }
+          : el.size
+        return { ...el, position: newPos, size: newSize }
+      }
+      return el
+    })
+    updateScene(currentSceneIndex, { elements: updated })
   }
 
   function updateScene(index: number, updates: Partial<CourseScene>) {
@@ -252,7 +280,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
           targetScene: "",
           backgroundColor: "#3b82f6",
           textColor: "#ffffff",
-          fontSize: 16,
         }
       case "input":
         return { placeholder: "Введіть текст...", label: "Поле вводу", required: false, multiline: false }
@@ -264,16 +291,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
         return { label: "Точка", pulseColor: "#ef4444", action: "show-tooltip", tooltipText: "Натисніть тут" }
       case "presentation":
         return { url: "", fileName: "Презентація", type: "pdf" }
-      case "survey":
-        return {
-          question: "Питання?",
-          multiple: false,
-          failOnWrong: true,
-          choices: [
-            { id: `c-${Date.now()}-1`, text: "Варіант 1", correct: true },
-            { id: `c-${Date.now()}-2`, text: "Варіант 2", correct: false },
-          ],
-        }
       default:
         return {}
     }
@@ -341,7 +358,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
     { value: "button", label: "Кнопка переходу", icon: MousePointer },
     { value: "input", label: "Поле вводу", icon: FileText },
     { value: "presentation", label: "Презентація", icon: Presentation },
-    { value: "survey", label: "Опитування", icon: Type },
     { value: "hotspot", label: "Hotspot", icon: Target },
     { value: "arrow", label: "Стрілка", icon: ArrowRight },
     { value: "tooltip", label: "Підказка", icon: Info },
@@ -356,41 +372,12 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
           const rect = canvasRef.current?.getBoundingClientRect()
           const canvasW = rect?.width || canvasSize?.width || 800
           const canvasH = rect?.height || canvasSize?.height || 600
-
-          // Determine displayed image rect inside canvas (account for object-fit: contain letterboxing)
-          let imgLeft = 0
-          let imgTop = 0
-          let imgW = canvasW
-          let imgH = canvasH
-          try {
-            const imgRect = bgImgRef.current?.getBoundingClientRect()
-            if (imgRect && rect) {
-              imgLeft = imgRect.left - rect.left
-              imgTop = imgRect.top - rect.top
-              imgW = imgRect.width
-              imgH = imgRect.height
-            }
-          } catch (e) {
-            // ignore measurement errors
-          }
-          // Map px into canvas coordinates, anchored to the displayed image rect
-          const naturalW = (currentScene as any).screenshotNaturalWidth || canvasW
-          const naturalH = (currentScene as any).screenshotNaturalHeight || canvasH
-
-          const naturalLeft = (element.position as any)?.x || 0
-          const naturalTop = (element.position as any)?.y || 0
-          const naturalWidth = (element.size as any)?.width || 0
-          const naturalHeight = (element.size as any)?.height || 0
-
-          // Use uniform scale (min of both axes) to preserve aspect ratio and prevent distortion
-          const scaleX = imgW / naturalW || 1
-          const scaleY = imgH / naturalH || 1
-          const scale = Math.min(scaleX, scaleY)
-
-          const left = Math.round(imgLeft + naturalLeft * scale)
-          const top = Math.round(imgTop + naturalTop * scale)
-          const width = Math.round(naturalWidth * scale)
-          const height = Math.round(naturalHeight * scale)
+          const posPerc = (element as any).positionPercent
+          const sizePerc = (element as any).sizePercent
+          const left = posPerc ? Math.round((posPerc.x / 100) * canvasW) : element.position.x
+          const top = posPerc ? Math.round((posPerc.y / 100) * canvasH) : element.position.y
+          const width = sizePerc ? Math.round((sizePerc.width / 100) * canvasW) : element.size?.width
+          const height = sizePerc ? Math.round((sizePerc.height / 100) * canvasH) : element.size?.height
 
           // debug: log first element computed positions for diagnostics
           if (idx === 0) {
@@ -426,7 +413,7 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                 <div
                   className="w-full h-full p-2 overflow-hidden pointer-events-none"
                   style={{
-                    fontSize: `${Math.round(((element.data as any).fontSize || 16) * scale)}px`,
+                    fontSize: `${element.data.fontSize}px`,
                     color: element.data.color,
                     backgroundColor: element.data.backgroundColor,
                   }}
@@ -436,112 +423,46 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
               )}
 
               {element.type === "image" && element.data.url && (
-                <>
-                  <img src={element.data.url || "/placeholder.svg"} alt="" className="w-full h-full object-contain pointer-events-none" style={{ objectPosition: "center" }} />
-                  
-                  {/* Resize and fullscreen controls - visible when selected */}
-                  {selectedElement === element.id && (
-                    <div className="absolute inset-0 flex items-end justify-end p-2 bg-black/5 group pointer-events-auto">
-                      {/* Resize handle */}
-                      <div
-                        className="w-6 h-6 bg-blue-500 hover:bg-blue-600 cursor-nwse-resize rounded-full"
-                        onMouseDown={(e) => {
-                          e.stopPropagation()
-                          const startX = e.clientX
-                          const startY = e.clientY
-                          const startW = element.size?.width || 100
-                          const startH = element.size?.height || 100
-                          const startLeft = element.position?.x || 0
-                          const startTop = element.position?.y || 0
-                          
-                          const handleMove = (moveEvent: MouseEvent) => {
-                            const deltaX = moveEvent.clientX - startX
-                            const deltaY = moveEvent.clientY - startY
-                            const newW = Math.max(50, startW + deltaX)
-                            const newH = Math.max(50, startH + deltaY)
-                            updateElement(element.id, { size: { width: newW, height: newH } })
-                          }
-                          
-                          const handleUp = () => {
-                            document.removeEventListener("mousemove", handleMove)
-                            document.removeEventListener("mouseup", handleUp)
-                          }
-                          
-                          document.addEventListener("mousemove", handleMove)
-                          document.addEventListener("mouseup", handleUp)
-                        }}
-                        title="Resize (drag)"
-                      />
-                    </div>
-                  )}
-                </>
+                <img src={element.data.url || "/placeholder.svg"} alt="" className="w-full h-full object-cover pointer-events-none" />
               )}
 
               {element.type === "button" && (
                 <div
                   className="w-full h-full flex items-center justify-center rounded font-medium pointer-events-none"
-                  style={{
-                    backgroundColor: element.data.backgroundColor,
-                    color: element.data.textColor,
-                    fontSize: `${Math.round(((element.data as any).fontSize || 16) * scale)}px`,
-                    lineHeight: `${height}px`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
+                  style={{ backgroundColor: element.data.backgroundColor, color: element.data.textColor }}
                 >
                   {element.data.label}
                 </div>
               )}
 
               {element.type === "input" && (
-                <div
-                  className="w-full h-full bg-white border-2 border-gray-300 rounded px-3 py-2 pointer-events-none"
-                  style={{ fontSize: `${Math.round(((element.data as any).fontSize || 14) * scale)}px` }}
-                >
+                <div className="w-full h-full bg-white border-2 border-gray-300 rounded px-3 py-2 pointer-events-none">
                   <span className="text-sm text-gray-400">{element.data.placeholder}</span>
                 </div>
               )}
 
               {element.type === "presentation" && (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 border-2 border-gray-300 rounded pointer-events-none" style={{ gap: '6px' }}>
-                  <Presentation className="" style={{ width: Math.round(Math.min(width, height) * 0.5), height: Math.round(Math.min(width, height) * 0.5), color: '#9CA3AF' }} />
-                  <span className="text-xs text-gray-600" style={{ fontSize: `${Math.max(10, Math.round(12 * scale))}px` }}>{element.data.fileName || "Презентація"}</span>
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 border-2 border-gray-300 rounded pointer-events-none">
+                  <Presentation className="h-8 w-8 text-gray-500 mb-2" />
+                  <span className="text-xs text-gray-600">{element.data.fileName || "Презентація"}</span>
                 </div>
               )}
 
               {element.type === "hotspot" && (
                 <div className="w-full h-full rounded-full flex items-center justify-center animate-pulse pointer-events-none" style={{ backgroundColor: element.data.pulseColor + "40" }}>
-                  <Target className="" style={{ width: Math.round(Math.min(width, height) * 0.6), height: Math.round(Math.min(width, height) * 0.6), color: element.data.pulseColor }} />
+                  <Target className="h-6 w-6" style={{ color: element.data.pulseColor }} />
                 </div>
               )}
 
               {element.type === "arrow" && (
                 <div className="w-full h-full flex items-center justify-center pointer-events-none">
-                  <div style={{ width: Math.round(Math.min(width, height) * 0.6), height: Math.round(Math.min(width, height) * 0.6) }}>
-                    <ArrowIcon className="w-full h-full" color={element.data.color} thickness={element.data.thickness} />
-                  </div>
+                  <ArrowIcon className="h-8 w-8" color={element.data.color} thickness={element.data.thickness} />
                 </div>
               )}
 
               {element.type === "tooltip" && (
                 <div className="w-full h-full p-2 rounded text-xs pointer-events-none" style={{ backgroundColor: element.data.backgroundColor, color: element.data.textColor }}>
                   {element.data.text}
-                </div>
-              )}
-
-              {element.type === "survey" && (
-                <div className="w-full h-full p-3 bg-white rounded shadow-sm overflow-hidden pointer-events-none">
-                  <p className="font-medium text-sm mb-2">{element.data.question}</p>
-                  <div className="space-y-1 text-sm">
-                    {(element.data.choices || []).slice(0, 4).map((ch: any) => (
-                      <div key={ch.id} className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-gray-200" />
-                        <div className="truncate">{ch.text}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-2">{element.data.multiple ? "Множинний вибір" : "Один вибір"}</div>
                 </div>
               )}
             </div>
@@ -555,11 +476,12 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
     const rect = canvasRef.current?.getBoundingClientRect()
     const canvasW = rect?.width || canvasSize?.width || 800
     const canvasH = rect?.height || canvasSize?.height || 600
-    // Use px fields directly (no percent)
-    const left = (el.position as any)?.x ?? 0
-    const top = (el.position as any)?.y ?? 0
-    const width = (el.size as any)?.width ?? 0
-    const height = (el.size as any)?.height ?? 0
+    const posPerc = (el as any).positionPercent
+    const sizePerc = (el as any).sizePercent
+    const left = posPerc ? Math.round((posPerc.x / 100) * canvasW) : (el.position?.x ?? 0)
+    const top = posPerc ? Math.round((posPerc.y / 100) * canvasH) : (el.position?.y ?? 0)
+    const width = sizePerc ? Math.round((sizePerc.width / 100) * canvasW) : (el.size?.width ?? 0)
+    const height = sizePerc ? Math.round((sizePerc.height / 100) * canvasH) : (el.size?.height ?? 0)
     return { left, top, width, height }
   }
 
@@ -776,43 +698,25 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                     </div>
 
                     <div
-                      className="relative bg-muted rounded-lg overflow-auto cursor-crosshair"
-                      style={{
-                        minHeight: "500px",
-                        maxHeight: "700px",
-                      }}
+                      ref={canvasRef}
+                      className="relative bg-muted rounded-lg overflow-hidden cursor-crosshair"
+                      style={{ minHeight: "500px" }}
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleMouseUp}
+                      onMouseLeave={handleMouseUp}
                     >
-                      <div
-                        ref={canvasRef}
-                        className="relative bg-muted cursor-crosshair inline-block"
-                        style={{
-                          width: canvasSize ? `${canvasSize.width}px` : "800px",
-                          height: canvasSize ? `${canvasSize.height}px` : "600px",
-                        }}
-                        onMouseMove={handleMouseMove}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                      >
                       {currentScene.screenshot && (
                         <img
-                          ref={bgImgRef}
                           src={currentScene.screenshot || "/placeholder.svg"}
                           alt="Scene background"
-                          onLoad={(e) => {
-                            handleBackgroundImageLoad(e.currentTarget)
-                            // force re-render measurements
-                            setTimeout(() => {
-                              // no-op; ensures layout recalculation
-                            }, 0)
-                          }}
-                          className="absolute left-0 top-0 w-full h-full pointer-events-none"
-                          style={{ objectFit: "contain", objectPosition: "center" }}
+                          onLoad={(e) => handleBackgroundImageLoad(e.currentTarget)}
+                          className="absolute left-0 w-full pointer-events-none"
+                          style={{ height: canvasSize ? `${canvasSize.height}px` : "100%", objectFit: "cover" }}
                         />
                       )}
 
                       {/* Render elements */}
                       {renderedElements}
-                    </div>
                     </div>
                   </>
                 )}
@@ -1203,84 +1107,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                       </>
                     )}
 
-                    {selectedElementData.type === "survey" && (
-                      <>
-                        <div className="space-y-2">
-                          <Label>Питання</Label>
-                          <Textarea
-                            value={selectedElementData.data.question}
-                            onChange={(e) =>
-                              updateElement(selectedElement!, {
-                                data: { ...selectedElementData.data, question: e.target.value },
-                              })
-                            }
-                            rows={3}
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Варіанти відповіді</Label>
-                          <div className="space-y-2">
-                            {(selectedElementData.data.choices || []).map((ch: any, idx: number) => (
-                              <div key={ch.id} className="flex items-center gap-2">
-                                <Input
-                                  value={ch.text}
-                                  onChange={(e) => {
-                                    const choices = (selectedElementData.data.choices || []).map((c: any) => (c.id === ch.id ? { ...c, text: e.target.value } : c))
-                                    updateElement(selectedElement!, { data: { ...selectedElementData.data, choices } })
-                                  }}
-                                />
-                                <label className="inline-flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={!!ch.correct}
-                                    onChange={(e) => {
-                                      const choices = (selectedElementData.data.choices || []).map((c: any) => (c.id === ch.id ? { ...c, correct: e.target.checked } : c))
-                                      updateElement(selectedElement!, { data: { ...selectedElementData.data, choices } })
-                                    }}
-                                  />
-                                  <span className="text-sm">Правильна</span>
-                                </label>
-                                <Button variant="ghost" size="icon" onClick={() => {
-                                  const choices = (selectedElementData.data.choices || []).filter((c: any) => c.id !== ch.id)
-                                  updateElement(selectedElement!, { data: { ...selectedElementData.data, choices } })
-                                }}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            ))}
-                            <Button size="sm" onClick={() => {
-                              const id = `c-${Date.now()}-${Math.random().toString(36).slice(2,6)}`
-                              const choices = [...(selectedElementData.data.choices || []), { id, text: "Новий варіант", correct: false }]
-                              updateElement(selectedElement!, { data: { ...selectedElementData.data, choices } })
-                            }}>Додати варіант</Button>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                          <label className="inline-flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              checked={!!selectedElementData.data.multiple}
-                              onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, multiple: e.target.checked } })}
-                            />
-                            <span className="text-sm">Дозволити множинний вибір</span>
-                          </label>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                          <label className="inline-flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              checked={!!selectedElementData.data.failOnWrong}
-                              onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, failOnWrong: e.target.checked } })}
-                            />
-                            <span className="text-sm">Провалити курс при неправильній відповіді</span>
-                          </label>
-                        </div>
-                      </>
-                    )}
-
                     {selectedElementData.type === "image" && (
                       <>
                         <div className="space-y-2">
@@ -1311,28 +1137,6 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                           >
                             <Upload className="h-4 w-4 mr-2" />
                             Завантажити зображення
-                          </Button>
-                        </div>
-
-                        {/* Fullscreen button */}
-                        <div className="space-y-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="w-full"
-                            onClick={() => {
-                              // Make element fullscreen
-                              const rect = canvasRef.current?.getBoundingClientRect()
-                              const canvasW = rect?.width || 800
-                              const canvasH = rect?.height || 600
-                              updateElement(selectedElement!, {
-                                position: { x: 0, y: 0 },
-                                size: { width: canvasW, height: canvasH },
-                              })
-                              toast({ title: "Успіх", description: "Зображення розтягнуто на весь canvas" })
-                            }}
-                          >
-                            На весь canvas
                           </Button>
                         </div>
                       </>
@@ -1373,42 +1177,7 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                       </>
                     )}
 
-                    {/* General background color control for all element types */}
-                    <div className="border-t pt-4">
-                      <h4 className="font-semibold mb-3 text-sm">Колір фону елемента</h4>
-                      <div className="space-y-2">
-                        <label className="inline-flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedElementData.backgroundColor === "transparent"}
-                            onChange={(e) =>
-                              updateElement(selectedElement!, {
-                                backgroundColor: e.target.checked ? "transparent" : "#ffffff",
-                              })
-                            }
-                          />
-                          <span className="text-sm">Прозорий</span>
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-3 mt-2">
-                        <Input
-                          type="color"
-                          value={selectedElementData.backgroundColor === "transparent" ? "#ffffff" : (selectedElementData.backgroundColor || "#ffffff")}
-                          onChange={(e) =>
-                            updateElement(selectedElement!, {
-                              backgroundColor: e.target.value,
-                            })
-                          }
-                          disabled={selectedElementData.backgroundColor === "transparent"}
-                          className="w-16 h-10"
-                        />
-                        <span className="text-xs text-muted-foreground">
-                          {selectedElementData.backgroundColor === "transparent" ? "Без фону" : selectedElementData.backgroundColor || "#ffffff"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button variant="destructive" className="w-full mt-4" onClick={() => deleteElement(selectedElement!)}>
+                    <Button variant="destructive" className="w-full" onClick={() => deleteElement(selectedElement!)}>
                       <Trash2 className="h-4 w-4 mr-2" />
                       Видалити елемент
                     </Button>

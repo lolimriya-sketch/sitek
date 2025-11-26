@@ -1,10 +1,3 @@
-"use client"
-
-import useMobileImpl from '@/components/ui/use-mobile'
-
-export default function useMobile() {
-  return useMobileImpl()
-}
 import * as React from 'react'
 
 const MOBILE_BREAKPOINT = 768

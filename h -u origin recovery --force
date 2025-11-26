@@ -1,0 +1,211 @@
+[33mcommit e2db6b270c5566e4c45afcdf77fcfd2a38ce33e1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrecovery[m[33m)[m
+Author: admatorra <admato7676@gmail.com>
+Date:   Tue Nov 11 07:18:08 2025 +0000
+
+    Відновлення всіх втрачених файлів
+
+ h>                                                       |  16 [32m+++++++++++[m
+ how --all                                                |  10 [32m+++++++[m
+ how --name-only 85420aa42165190bc77d75c014257daf253edf5b |  96 [32m+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ ziID4yBn                                                 | Bin [31m0[m -> [32m810519893[m bytes
+ 4 files changed, 122 insertions(+)
+
+[33mcommit d48e3cdc52ce6c4ac7b4a98db7bef955953baa02[m
+Author: admatorra <admato7676@gmail.com>
+Date:   Tue Nov 11 06:34:04 2025 +0000
+
+    Оновлення проекту з Codespaces
+
+ .dev.log                                     | 2390 [32m+++++++++++++++++++++++++++++++++++++++++++++++[m
+ .dev.pid                                     |    1 [32m+[m
+ .ipynb_checkpoints/Untitled-checkpoint.ipynb |    6 [32m+[m
+ Untitled.ipynb                               |   35 [32m+[m
+ app/admin/courses/[id]/analytics/page.tsx    |   22 [32m+[m[31m-[m
+ app/api/auth/route.ts                        |   18 [32m+[m
+ app/api/courses/route.ts                     |   74 [32m++[m
+ app/api/db/route.ts                          |   45 [32m+[m[31m-[m
+ app/api/progress/route.ts                    |   26 [32m+[m
+ app/api/users/route.ts                       |   28 [32m+[m
+ app/dashboard/courses/page.tsx               |    8 [32m+[m[31m-[m
+ c.tsx                                        |   61 [32m++[m
+ components/admin-calls-panel.tsx             |   54 [32m+[m[31m-[m
+ components/admin-nav.tsx                     |    4 [32m+[m[31m-[m
+ components/arrow-icon.tsx                    |   17 [32m+[m
+ components/assign-course-dialog.tsx          |   97 [32m+[m[31m-[m
+ components/change-password-form.tsx          |   51 [32m+[m[31m-[m
+ components/contact-admin.tsx                 |  162 [32m++[m[31m--[m
+ components/course-editor.tsx                 |  515 [32m+++++++[m[31m---[m
+ components/course-viewer.tsx                 |  125 [32m++[m[31m-[m
+ components/courses-table.tsx                 |   28 [32m+[m[31m-[m
+ components/create-course-dialog.tsx          |   36 [32m+[m[31m-[m
+ components/create-user-dialog.tsx            |   23 [32m+[m[31m-[m
+ components/edit-user-dialog.tsx              |   30 [32m+[m[31m-[m
+ components/login-form.tsx                    |   29 [32m+[m[31m-[m
+ components/reset-progress-button.tsx         |   33 [32m+[m[31m-[m
+ components/site_lms.code-workspace           |    8 [32m+[m
+ components/user-nav.tsx                      |    3 [32m+[m[31m-[m
+ components/users-table.tsx                   |   35 [32m+[m[31m-[m
+ data/db.json                                 | 1166 [32m+++++++++++++++++++++++[m
+ lib/auth.ts                                  |   15 [32m+[m
+ lib/courses.ts                               |    4 [32m+[m[31m-[m
+ lib/db.ts                                    |  237 [32m+++[m[31m--[m
+ lib/types.ts                                 |    4 [32m+[m[31m-[m
+ package-lock.json                            | 3780 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ package.json                                 |    8 [32m+[m[31m-[m
+ pnpm-lock.yaml                               | 3454 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m[31m-[m
+ pnpm-workspace.yaml                          |    3 [32m+[m
+ public/apple-icon.png                        |  Bin [31m2626[m -> [32m0[m bytes
+ public/icon-dark-32x32.png                   |  Bin [31m585[m -> [32m0[m bytes
+ public/icon-light-32x32.png                  |  Bin [31m566[m -> [32m0[m bytes
+ public/icon.svg                              |   26 [31m-[m
+ public/placeholder-logo.png                  |  Bin [31m568[m -> [32m0[m bytes
+ public/placeholder-logo.svg                  |    1 [31m-[m
+ public/placeholder-user.jpg                  |  Bin [31m1635[m -> [32m0[m bytes
+ public/placeholder.jpg                       |  Bin [31m1064[m -> [32m0[m bytes
+ public/placeholder.svg                       |    1 [31m-[m
+ scene-scene-1762820743303.json               |   45 [32m+[m
+ scripts/smoke.js                             |   31 [32m+[m
+ tsconfig.json                                |   24 [32m+[m[31m-[m
+ 50 files changed, 12267 insertions(+), 496 deletions(-)
+
+[33mcommit d6a6ca0535590749f57272293200bbf2c10b85b9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/codespace-effective-space-eureka-69p4xq5w7qv9c4p4j[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mcodespace-effective-space-eureka-69p4xq5w7qv9c4p4j[m[33m)[m
+Author: admato <106904129+admato@users.noreply.github.com>
+Date:   Mon Nov 10 20:46:00 2025 +0200
+
+    site
+
+ .gitignore                                |  27 [32m+++[m
+ app/actions/auth.ts                       | 180 [32m+++++++++++++++[m
+ app/actions/calls.ts                      |  52 [32m+++++[m
+ app/actions/courses.ts                    | 124 [32m++++++++++[m
+ app/actions/progress.ts                   | 105 [32m+++++++++[m
+ app/admin/courses/[id]/analytics/page.tsx | 308 [32m+++++++++++++++++++++++++[m
+ app/admin/courses/[id]/page.tsx           |  18 [32m++[m
+ app/admin/courses/page.tsx                |  20 [32m++[m
+ app/admin/layout.tsx                      |  24 [32m++[m
+ app/admin/page.tsx                        |   5 [32m+[m
+ app/admin/profile/page.tsx                |  53 [32m+++++[m
+ app/admin/users/page.tsx                  |  20 [32m++[m
+ app/api/db/route.ts                       |  31 [32m+++[m
+ app/dashboard/completed/page.tsx          |  32 [32m+++[m
+ app/dashboard/contact/page.tsx            |  13 [32m++[m
+ app/dashboard/courses/[id]/page.tsx       |  25 [32m++[m
+ app/dashboard/courses/page.tsx            |  17 [32m++[m
+ app/dashboard/layout.tsx                  |  28 [32m+++[m
+ app/dashboard/page.tsx                    |   5 [32m+[m
+ app/globals.css                           | 126 [32m++++++++++[m
+ app/layout.tsx                            |  53 [32m+++++[m
+ app/page.tsx                              |  34 [32m+++[m
+ components.json                           |  21 [32m++[m
+ components/admin-calls-panel.tsx          | 200 [32m++++++++++++++++[m
+ components/admin-nav.tsx                  |  90 [32m++++++++[m
+ components/assign-course-dialog.tsx       | 152 [32m+++++++++++++[m
+ components/change-password-form.tsx       | 123 [32m++++++++++[m
+ components/completed-courses-table.tsx    |  88 [32m+++++++[m
+ components/contact-admin.tsx              | 252 [32m++++++++++++++++++++[m
+ components/course-editor.tsx              | 972 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ components/course-viewer.tsx              | 411 [32m+++++++++++++++++++++++++++++++++[m
+ components/courses-grid.tsx               |  58 [32m+++++[m
+ components/courses-table.tsx              | 151 [32m++++++++++++[m
+ components/create-course-dialog.tsx       | 106 [32m+++++++++[m
+ components/create-user-dialog.tsx         | 133 [32m+++++++++++[m
+ components/edit-user-dialog.tsx           |  97 [32m++++++++[m
+ components/login-form.tsx                 |  78 [32m+++++++[m
+ components/reset-progress-button.tsx      |  77 [32m+++++++[m
+ components/storage-initializer.tsx        |  12 [32m+[m
+ components/theme-provider.tsx             |  42 [32m++++[m
+ components/theme-toggle.tsx               |  16 [32m++[m
+ components/ui/accordion.tsx               |  66 [32m++++++[m
+ components/ui/alert-dialog.tsx            | 157 [32m+++++++++++++[m
+ components/ui/alert.tsx                   |  66 [32m++++++[m
+ components/ui/aspect-ratio.tsx            |  11 [32m+[m
+ components/ui/avatar.tsx                  |  53 [32m+++++[m
+ components/ui/badge.tsx                   |  46 [32m++++[m
+ components/ui/breadcrumb.tsx              | 109 [32m+++++++++[m
+ components/ui/button-group.tsx            |  83 [32m+++++++[m
+ components/ui/button.tsx                  |  60 [32m+++++[m
+ components/ui/calendar.tsx                | 213 [32m+++++++++++++++++[m
+ components/ui/card.tsx                    |  92 [32m++++++++[m
+ components/ui/carousel.tsx                | 241 [32m++++++++++++++++++++[m
+ components/ui/chart.tsx                   | 353 [32m++++++++++++++++++++++++++++[m
+ components/ui/checkbox.tsx                |  32 [32m+++[m
+ components/ui/collapsible.tsx             |  33 [32m+++[m
+ components/ui/command.tsx                 | 184 [32m+++++++++++++++[m
+ components/ui/context-menu.tsx            | 252 [32m++++++++++++++++++++[m
+ components/ui/dialog.tsx                  | 143 [32m++++++++++++[m
+ components/ui/drawer.tsx                  | 135 [32m+++++++++++[m
+ components/ui/dropdown-menu.tsx           | 257 [32m+++++++++++++++++++++[m
+ components/ui/empty.tsx                   | 104 [32m+++++++++[m
+ components/ui/field.tsx                   | 244 [32m++++++++++++++++++++[m
+ components/ui/form.tsx                    | 167 [32m++++++++++++++[m
+ components/ui/hover-card.tsx              |  44 [32m++++[m
+ components/ui/input-group.tsx             | 169 [32m++++++++++++++[m
+ components/ui/input-otp.tsx               |  77 [32m+++++++[m
+ components/ui/input.tsx                   |  21 [32m++[m
+ components/ui/item.tsx                    | 193 [32m++++++++++++++++[m
+ components/ui/kbd.tsx                     |  28 [32m+++[m
+ components/ui/label.tsx                   |  24 [32m++[m
+ components/ui/menubar.tsx                 | 276 [32m++++++++++++++++++++++[m
+ components/ui/navigation-menu.tsx         | 166 [32m++++++++++++++[m
+ components/ui/pagination.tsx              | 127 [32m+++++++++++[m
+ components/ui/popover.tsx                 |  48 [32m++++[m
+ components/ui/progress.tsx                |  31 [32m+++[m
+ components/ui/radio-group.tsx             |  45 [32m++++[m
+ components/ui/resizable.tsx               |  56 [32m+++++[m
+ components/ui/scroll-area.tsx             |  58 [32m+++++[m
+ components/ui/select.tsx                  | 185 [32m+++++++++++++++[m
+ components/ui/separator.tsx               |  28 [32m+++[m
+ components/ui/sheet.tsx                   | 139 [32m++++++++++++[m
+ components/ui/sidebar.tsx                 | 726 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ components/ui/skeleton.tsx                |  13 [32m++[m
+ components/ui/slider.tsx                  |  63 [32m+++++[m
+ components/ui/sonner.tsx                  |  25 [32m++[m
+ components/ui/spinner.tsx                 |  16 [32m++[m
+ components/ui/switch.tsx                  |  31 [32m+++[m
+ components/ui/table.tsx                   | 116 [32m++++++++++[m
+ components/ui/tabs.tsx                    |  66 [32m++++++[m
+ components/ui/textarea.tsx                |  18 [32m++[m
+ components/ui/toast.tsx                   | 129 [32m+++++++++++[m
+ components/ui/toaster.tsx                 |  35 [32m+++[m
+ components/ui/toggle-group.tsx            |  73 [32m++++++[m
+ components/ui/toggle.tsx                  |  47 [32m++++[m
+ components/ui/tooltip.tsx                 |  61 [32m+++++[m
+ components/ui/use-mobile.tsx              |  19 [32m++[m
+ components/ui/use-toast.ts                | 191 [32m++++++++++++++++[m
+ components/user-nav.tsx                   |  62 [32m+++++[m
+ components/users-table.tsx                | 129 [32m+++++++++++[m
+ hooks/use-mobile.ts                       |  19 [32m++[m
+ hooks/use-toast.ts                        | 191 [32m++++++++++++++++[m
+ lib/auth.ts                               |  70 [32m++++++[m
+ lib/calls.ts                              |  39 [32m++++[m
+ lib/courses.ts                            | 122 [32m++++++++++[m
+ lib/db.ts                                 |  84 [32m+++++++[m
+ lib/progress.ts                           | 112 [32m+++++++++[m
+ lib/storage.ts                            |  77 [32m+++++++[m
+ lib/types.ts                              |  90 [32m++++++++[m
+ lib/utils.ts                              |   6 [32m+[m
+ next.config.mjs                           |  11 [32m+[m
+ package.json                              |  73 [32m++++++[m
+ pnpm-lock.yaml                            |   5 [32m+[m
+ postcss.config.mjs                        |   8 [32m+[m
+ public/apple-icon.png                     | Bin [31m0[m -> [32m2626[m bytes
+ public/icon-dark-32x32.png                | Bin [31m0[m -> [32m585[m bytes
+ public/icon-light-32x32.png               | Bin [31m0[m -> [32m566[m bytes
+ public/icon.svg                           |  26 [32m+++[m
+ public/placeholder-logo.png               | Bin [31m0[m -> [32m568[m bytes
+ public/placeholder-logo.svg               |   1 [32m+[m
+ public/placeholder-user.jpg               | Bin [31m0[m -> [32m1635[m bytes
+ public/placeholder.jpg                    | Bin [31m0[m -> [32m1064[m bytes
+ public/placeholder.svg                    |   1 [32m+[m
+ styles/globals.css                        | 125 [32m++++++++++[m
+ tsconfig.json                             |  27 [32m+++[m
+ 125 files changed, 12102 insertions(+)
+
+[33mcommit 87fde4d9679170302b4420a282a34dc8596e1b48[m
+Author: admato <106904129+admato@users.noreply.github.com>
+Date:   Mon Nov 10 20:44:50 2025 +0200
+
+    Initial commit
+
+ .gitattributes | 2 [32m++[m
+ 1 file changed, 2 insertions(+)

@@ -18,9 +18,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-background">
       <AdminNav userName={user.name} userId={user.id} />
-      <main className="fixed-container" style={{ padding: '16px' }}>
-        {children}
-      </main>
+      <main className="container mx-auto p-4 md:p-6 lg:p-8">{children}</main>
     </div>
   )
 }

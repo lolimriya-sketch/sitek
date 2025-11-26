@@ -22,9 +22,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <UserNav userName={user.name} />
-      <main className="fixed-container" style={{ padding: '16px' }}>
-        {children}
-      </main>
+      <main className="container mx-auto p-4 md:p-6 lg:p-8">{children}</main>
     </div>
   )
 }

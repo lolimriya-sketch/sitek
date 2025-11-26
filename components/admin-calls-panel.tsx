@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Phone, PhoneOff, PhoneIncoming, Mic, MicOff } from "lucide-react"
 import type { CallRequest } from "@/lib/types"
-import { getPendingCallRequestsAction, updateCallStatusAction } from "@/app/actions/calls"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 
@@ -26,9 +25,13 @@ export function AdminCallsPanel() {
   }, [])
 
   async function loadRequests() {
-    const result = await getPendingCallRequestsAction()
-    if (result.success && result.requests) {
-      setRequests(result.requests)
+    try {
+      const res = await fetch('/api/db')
+      const db = res.ok ? await res.json() : { calls: [] }
+      const pending = (db.calls || []).filter((c: any) => c.status === 'pending')
+      setRequests(pending)
+    } catch (err) {
+      setRequests([])
     }
   }
 
@@ -39,7 +42,20 @@ export function AdminCallsPanel() {
       localStreamRef.current = stream
 
       // Update call status
-      await updateCallStatusAction(request.id, "accepted")
+      // update call status via API
+      try {
+        const res = await fetch('/api/db')
+        const db = res.ok ? await res.json() : { calls: [] }
+        const calls = db.calls || []
+        const updated = calls.map((c: any) => (c.id === request.id ? { ...c, status: 'accepted' } : c))
+        await fetch('/api/db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ calls: updated }),
+        })
+      } catch (err) {
+        console.error('Failed to update call status', err)
+      }
       setActiveCall(request)
 
       // Initialize WebRTC
@@ -64,12 +80,12 @@ export function AdminCallsPanel() {
 
       peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
-          console.log("[LMSAlphadateE candidate:", event.candidate)
+          console.log("[v0] Admin ICE candidate:", event.candidate)
         }
       }
 
       peerConnection.onconnectionstatechange = () => {
-        console.log("[LM] Admin connection state:", peerConnection.connectionState)
+        console.log("[v0] Admin connection state:", peerConnection.connectionState)
         if (peerConnection.connectionState === "disconnected" || peerConnection.connectionState === "failed") {
           endCall()
         }
@@ -82,7 +98,7 @@ export function AdminCallsPanel() {
 
       loadRequests()
     } catch (error) {
-      console.error("[LMSAlphadateSAlphadate] Error accepting call:", error)
+      console.error("[v0] Error accepting call:", error)
       toast({
         variant: "destructive",
         title: "Помилка",
@@ -92,7 +108,19 @@ export function AdminCallsPanel() {
   }
 
   async function rejectCall(request: CallRequest) {
-    await updateCallStatusAction(request.id, "rejected")
+    try {
+      const res = await fetch('/api/db')
+      const db = res.ok ? await res.json() : { calls: [] }
+      const calls = db.calls || []
+      const updated = calls.map((c: any) => (c.id === request.id ? { ...c, status: 'rejected' } : c))
+      await fetch('/api/db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ calls: updated }),
+      })
+    } catch (err) {
+      console.error('Failed to update call status', err)
+    }
     toast({
       title: "Дзвінок відхилено",
     })
@@ -121,7 +149,19 @@ export function AdminCallsPanel() {
     }
 
     if (activeCall) {
-      await updateCallStatusAction(activeCall.id, "ended")
+      try {
+        const res = await fetch('/api/db')
+        const db = res.ok ? await res.json() : { calls: [] }
+        const calls = db.calls || []
+        const updated = calls.map((c: any) => (c.id === activeCall.id ? { ...c, status: 'ended' } : c))
+        await fetch('/api/db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ calls: updated }),
+        })
+      } catch (err) {
+        console.error('Failed to update call status', err)
+      }
     }
 
     setActiveCall(null)

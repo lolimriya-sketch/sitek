@@ -2,7 +2,6 @@ import { requireAdmin } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChangePasswordForm } from "@/components/change-password-form"
-import EditProfileForm from "@/components/edit-profile-form"
 
 export default async function ProfilePage() {
   const user = await requireAdmin()
@@ -26,7 +25,12 @@ export default async function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <EditProfileForm userId={user.id} initialEmail={user.email} initialName={user.name} />
+            <div className="text-sm font-medium text-muted-foreground">Email</div>
+            <div className="text-base">{user.email}</div>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-muted-foreground">Ім'я</div>
+            <div className="text-base">{user.name}</div>
           </div>
           <div>
             <div className="text-sm font-medium text-muted-foreground">Роль</div>
