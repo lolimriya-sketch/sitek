@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Phone, PhoneOff, Mic, MicOff } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
-// Using REST API endpoints instead of Server Actions
+import { createCallRequestAction, getCallRequestAction, updateCallStatusAction } from "@/app/actions/calls"
+import { getAllAdminsAction } from "@/app/actions/auth"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -23,14 +24,12 @@ export function ContactAdmin() {
 
   useEffect(() => {
     async function loadAdmins() {
-      try {
-        const res = await fetch('/api/users')
-        const users = res.ok ? await res.json() : []
-        const adminsList = (users || []).filter((u: any) => u.role === 'admin').map((a: any) => ({ id: a.id, name: a.name }))
-        setAdmins(adminsList)
-        if (adminsList.length > 0) setSelectedAdminId(adminsList[0].id)
-      } catch (err) {
-        setAdmins([])
+      const result = await getAllAdminsAction()
+      if (result.success && result.admins) {
+        setAdmins(result.admins)
+        if (result.admins.length > 0) {
+          setSelectedAdminId(result.admins[0].id)
+        }
       }
     }
     loadAdmins()
@@ -39,29 +38,22 @@ export function ContactAdmin() {
   useEffect(() => {
     if (calling && callId) {
       const interval = setInterval(async () => {
-        try {
-          const res = await fetch('/api/db')
-          const db = res.ok ? await res.json() : { calls: [] }
-          const calls = db.calls || []
-          const request = calls.find((c: any) => c.id === callId)
-          if (request) {
-            if (request.status === "accepted") {
-              setConnectionStatus("connected")
-              toast({
-                title: "Дзвінок прийнято",
-                description: "Адміністратор приєднався до дзвінка",
-              })
-            } else if (request.status === "rejected") {
-              handleEndCall()
-              toast({
-                variant: "destructive",
-                title: "Дзвінок відхилено",
-                description: "Адміністратор недоступний",
-              })
-            }
+        const result = await getCallRequestAction(callId)
+        if (result.success && result.request) {
+          if (result.request.status === "accepted") {
+            setConnectionStatus("connected")
+            toast({
+              title: "Дзвінок прийнято",
+              description: "Адміністратор приєднався до дзвінка",
+            })
+          } else if (result.request.status === "rejected") {
+            handleEndCall()
+            toast({
+              variant: "destructive",
+              title: "Дзвінок відхилено",
+              description: "Адміністратор недоступний",
+            })
           }
-        } catch (err) {
-          console.error('Failed polling call status', err)
         }
       }, 2000)
 
@@ -86,71 +78,57 @@ export function ContactAdmin() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       localStreamRef.current = stream
 
-      // Create call request via API
-      // Create call request via API
-      const res = await fetch('/api/db')
-      const db = res.ok ? await res.json() : { calls: [] }
-      const calls = db.calls || []
-      const newCall = {
-        id: `call-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        userId: 'anonymous',
-        userName: 'Гість',
-        createdAt: new Date().toISOString(),
-        status: 'pending',
-      }
-      const updated = [...calls, newCall]
-      await fetch('/api/db', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ calls: updated }),
-      })
-      setCallId(newCall.id)
-      setCalling(true)
+      // Create call request
+      const result = await createCallRequestAction()
+      if (result.success && result.request) {
+        setCallId(result.request.id)
+        setCalling(true)
 
-      // Initialize WebRTC
-      const configuration: RTCConfiguration = {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
-      }
-
-      const peerConnection = new RTCPeerConnection(configuration)
-      peerConnectionRef.current = peerConnection
-
-      // Add local stream tracks
-      stream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, stream)
-      })
-
-      // Handle incoming tracks
-      peerConnection.ontrack = (event) => {
-        if (remoteAudioRef.current) {
-          remoteAudioRef.current.srcObject = event.streams[0]
+        // Initialize WebRTC
+        const configuration: RTCConfiguration = {
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
         }
-      }
 
-      // Handle ICE candidates
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          console.log("[v0] New ICE candidate:", event.candidate)
+        const peerConnection = new RTCPeerConnection(configuration)
+        peerConnectionRef.current = peerConnection
+
+        // Add local stream tracks
+        stream.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, stream)
+        })
+
+        // Handle incoming tracks
+        peerConnection.ontrack = (event) => {
+          if (remoteAudioRef.current) {
+            remoteAudioRef.current.srcObject = event.streams[0]
+          }
         }
-      }
 
-      // Monitor connection state
-      peerConnection.onconnectionstatechange = () => {
-        console.log("[v0] Connection state:", peerConnection.connectionState)
-        if (peerConnection.connectionState === "connected") {
-          setConnectionStatus("connected")
-        } else if (peerConnection.connectionState === "disconnected" || peerConnection.connectionState === "failed") {
-          handleEndCall()
+        // Handle ICE candidates
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            console.log("[LMSAlphadatecandidate:", event.candidate)
+          }
         }
-      }
 
-      const selectedAdmin = admins.find((a) => a.id === selectedAdminId)
-      toast({
-        title: "Очікування відповіді",
-        description: `Чекаємо на підключення ${selectedAdmin?.name || "адміністратора"}...`,
-      })
+        // Monitor connection state
+        peerConnection.onconnectionstatechange = () => {
+          console.log("[LM] Connection state:", peerConnection.connectionState)
+          if (peerConnection.connectionState === "connected") {
+            setConnectionStatus("connected")
+          } else if (peerConnection.connectionState === "disconnected" || peerConnection.connectionState === "failed") {
+            handleEndCall()
+          }
+        }
+
+        const selectedAdmin = admins.find((a) => a.id === selectedAdminId)
+        toast({
+          title: "Очікування відповіді",
+          description: `Чекаємо на підключення ${selectedAdmin?.name || "адміністратора"}...`,
+        })
+      }
     } catch (error) {
-      console.error("[v0] Error starting call:", error)
+      console.error("[LMSAlphadateSAlphadate] Error starting call:", error)
       toast({
         variant: "destructive",
         title: "Помилка",
@@ -183,21 +161,9 @@ export function ContactAdmin() {
       peerConnectionRef.current = null
     }
 
-    // Update call status via API
+    // Update call status
     if (callId) {
-      try {
-        const res = await fetch('/api/db')
-        const db = res.ok ? await res.json() : { calls: [] }
-        const calls = db.calls || []
-        const updated = calls.map((c: any) => (c.id === callId ? { ...c, status: 'ended' } : c))
-        await fetch('/api/db', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ calls: updated }),
-        })
-      } catch (err) {
-        console.error('Failed to update call status', err)
-      }
+      await updateCallStatusAction(callId, "ended")
     }
 
     setCalling(false)

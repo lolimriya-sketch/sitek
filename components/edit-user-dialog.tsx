@@ -16,15 +16,18 @@ interface EditUserDialogProps {
   user: User
   open: boolean
   onClose: () => void
+  currentUser?: User | null
 }
 
-export function EditUserDialog({ user, open, onClose }: EditUserDialogProps) {
+export function EditUserDialog({ user, open, onClose, currentUser }: EditUserDialogProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [email, setEmail] = useState(user.email)
   const [name, setName] = useState(user.name)
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const isEditingAdmin = user.role === "admin" || user.role === "superadmin"
+  const canChangeAdminPassword = currentUser?.role === "superadmin" || currentUser?.id === "admin-1"
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -74,16 +77,20 @@ export function EditUserDialog({ user, open, onClose }: EditUserDialogProps) {
             <Label htmlFor="edit-email">Email</Label>
             <Input id="edit-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="edit-password">Новий пароль (опціонально)</Label>
-            <Input
-              id="edit-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Залиште порожнім для збереження поточного"
-            />
-          </div>
+          {(!isEditingAdmin || canChangeAdminPassword) ? (
+            <div className="space-y-2">
+              <Label htmlFor="edit-password">Новий пароль (опціонально)</Label>
+              <Input
+                id="edit-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Залиште порожнім для збереження поточного"
+              />
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground">Тільки головний адміністратор може змінювати паролі адміністраторів.</div>
+          )}
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Скасувати

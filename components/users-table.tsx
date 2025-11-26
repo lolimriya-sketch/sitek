@@ -23,14 +23,15 @@ import { EditUserDialog } from "@/components/edit-user-dialog"
 
 interface UsersTableProps {
   users: User[]
+  currentUser?: User | null
 }
 
-export function UsersTable({ users }: UsersTableProps) {
+export function UsersTable({ users, currentUser }: UsersTableProps) {
   const router = useRouter()
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null)
   const [editUser, setEditUser] = useState<User | null>(null)
 
-  async function handleRoleChange(userId: string, role: "admin" | "user") {
+  async function handleRoleChange(userId: string, role: "superadmin" | "admin" | "user") {
     try {
       const res = await fetch('/api/users')
       const users = res.ok ? await res.json() : []
@@ -83,8 +84,8 @@ export function UsersTable({ users }: UsersTableProps) {
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <Badge variant={user.role === "admin" ? "default" : "secondary"}>
-                    {user.role === "admin" ? "Адміністратор" : "Користувач"}
+                  <Badge variant={user.role === "superadmin" ? "destructive" : user.role === "admin" ? "default" : "secondary"}>
+                    {user.role === "superadmin" ? "Головний адміністратор" : user.role === "admin" ? "Адміністратор" : "Користувач"}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
@@ -111,6 +112,20 @@ export function UsersTable({ users }: UsersTableProps) {
                         <DropdownMenuItem onClick={() => handleRoleChange(user.id, "user")}>
                           <UserIcon className="h-4 w-4 mr-2" />
                           Зробити користувачем
+                        </DropdownMenuItem>
+                      )}
+
+                      {/* Allow superadmin to promote/demote superadmin */}
+                      {currentUser?.role === "superadmin" && user.role !== "superadmin" && (
+                        <DropdownMenuItem onClick={() => handleRoleChange(user.id, "superadmin")}>
+                          <Shield className="h-4 w-4 mr-2" />
+                          Зробити головним адміном
+                        </DropdownMenuItem>
+                      )}
+                      {currentUser?.role === "superadmin" && user.role === "superadmin" && (
+                        <DropdownMenuItem onClick={() => handleRoleChange(user.id, "admin")}>
+                          <UserIcon className="h-4 w-4 mr-2" />
+                          Відмінити головного адміна
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => setDeleteUserId(user.id)} className="text-destructive">
@@ -146,7 +161,9 @@ export function UsersTable({ users }: UsersTableProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      {editUser && <EditUserDialog user={editUser} open={!!editUser} onClose={() => setEditUser(null)} />}
+      {editUser && (
+        <EditUserDialog user={editUser} open={!!editUser} onClose={() => setEditUser(null)} currentUser={currentUser} />
+      )}
     </>
   )
 }

@@ -22,6 +22,7 @@ export function AssignCourseDialog({ courseId, open, onOpenChange }: AssignCours
   const router = useRouter()
   const { toast } = useToast()
   const [users, setUsers] = useState<User[]>([])
+  const [admins, setAdmins] = useState<User[]>([])
   const [assignments, setAssignments] = useState<CourseAssignment[]>([])
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
@@ -42,6 +43,8 @@ export function AssignCourseDialog({ courseId, open, onOpenChange }: AssignCours
       const usersData = usersRes.ok ? await usersRes.json() : []
       const regularUsers = (usersData || []).filter((u: any) => u.role === "user")
       setUsers(regularUsers)
+      const adminsList = (usersData || []).filter((u: any) => u.role === "admin")
+      setAdmins(adminsList)
 
       // fetch assignments from /api/db (returns full DB)
       const dbRes = await fetch("/api/db")
@@ -58,6 +61,33 @@ export function AssignCourseDialog({ courseId, open, onOpenChange }: AssignCours
     }
 
     setLoading(false)
+  }
+
+  // Filter state by manager
+  const [managerFilter, setManagerFilter] = useState<string | "all">("all")
+
+  function visibleUsers() {
+    if (managerFilter === "all") return users
+    if (managerFilter === "unassigned") return users.filter((u) => !u.managerId)
+    return users.filter((u) => u.managerId === managerFilter)
+  }
+
+  async function setUserManager(userId: string, adminId?: string) {
+    try {
+      // fetch full users list, modify managerId for target user, and overwrite
+      const res = await fetch('/api/users')
+      const all = res.ok ? await res.json() : []
+      const updated = (all || []).map((u: any) => (u.id === userId ? { ...u, managerId: adminId } : u))
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ users: updated }),
+      })
+      // refresh local list
+      loadData()
+    } catch (err) {
+      toast({ variant: 'destructive', title: 'Помилка', description: 'Не вдалося оновити менеджера користувача' })
+    }
   }
 
   function toggleUser(userId: string) {
@@ -138,23 +168,53 @@ export function AssignCourseDialog({ courseId, open, onOpenChange }: AssignCours
           </div>
         ) : (
           <>
+            <div className="flex items-center gap-2 mb-3">
+              <select className="rounded px-2 py-1" value={managerFilter} onChange={(e) => setManagerFilter(e.target.value as any)}>
+                <option value="all">Всі користувачі</option>
+                <option value="unassigned">Без прив'язки</option>
+                {admins.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+              <Button variant="outline" size="sm" onClick={() => setSelectedUsers(new Set(visibleUsers().map((u) => u.id)))}>
+                Призначити всім
+              </Button>
+            </div>
+
             <ScrollArea className="h-[300px] pr-4">
               <div className="space-y-3">
-                {users.map((user) => (
-                  <div key={user.id} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={user.id}
-                      checked={selectedUsers.has(user.id)}
-                      onCheckedChange={() => toggleUser(user.id)}
-                    />
-                    <Label htmlFor={user.id} className="flex-1 cursor-pointer">
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                  {visibleUsers().map((user) => (
+                    <div key={user.id} className="flex items-center space-x-3">
+                      <Checkbox
+                        id={user.id}
+                        checked={selectedUsers.has(user.id)}
+                        onCheckedChange={() => toggleUser(user.id)}
+                      />
+                      <Label htmlFor={user.id} className="flex-1 cursor-pointer">
+                        <div>
+                          <p className="font-medium">{user.name}</p>
+                          <p className="text-sm text-muted-foreground">{user.email}</p>
+                        </div>
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{user.managerId ? admins.find((a) => a.id === user.managerId)?.name : '—'}</span>
+                        <select
+                          className="text-xs rounded border px-1 py-0.5"
+                          value={user.managerId || ""}
+                          onChange={(e) => setUserManager(user.id, e.target.value || undefined)}
+                        >
+                          <option value="">(без)</option>
+                          {admins.map((a) => (
+                            <option key={a.id} value={a.id}>
+                              {a.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                    </Label>
-                  </div>
-                ))}
+                    </div>
+                  ))}
               </div>
             </ScrollArea>
 
