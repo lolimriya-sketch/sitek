@@ -20,11 +20,12 @@ export interface CourseScene {
 
 export interface SceneElement {
   id: string
-  type: "text" | "image" | "video" | "clickzone" | "arrow" | "tooltip" | "hotspot" | "button" | "input" | "presentation" | "quiz"
+  type: "text" | "image" | "video" | "clickzone" | "arrow" | "tooltip" | "hotspot" | "button" | "input" | "presentation"
   data: any
   position: { x: number; y: number }
   size?: { width: number; height: number }
   rotation?: number
+  backgroundColor?: string // "#ffffff" or "transparent"
   clickAction?: {
     type: "next-scene" | "show-tooltip" | "complete" | "goto-scene"
     value?: string // scene ID for goto-scene
@@ -45,7 +46,7 @@ export interface Course {
 
 export interface CourseContent {
   id: string
-  type: "text" | "image" | "video" | "clickzone" | "arrow" | "tooltip" | "quiz"
+  type: "text" | "image" | "video" | "clickzone" | "arrow" | "tooltip"
   data: any
   position: { x: number; y: number }
   size?: { width: number; height: number }

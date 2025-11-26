@@ -1,7 +1,7 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { validateLogin, requireAdmin, getCurrentUser } from "@/lib/auth"
+import { validateLogin, requireAdmin, getCurrentUser, requireSuperAdmin, requireAuth } from "@/lib/auth"
 import { clientDB } from "@/lib/db"
 import type { User } from "@/lib/types"
 import { revalidatePath } from "next/cache"
@@ -31,7 +31,7 @@ export async function logoutAction() {
   revalidatePath("/")
 }
 
-export async function createUserAction(email: string, password: string, name: string, role: "admin" | "user") {
+export async function createUserAction(email: string, password: string, name: string, role: "superadmin" | "admin" | "user") {
   try {
     const admin = await requireAdmin()
     const users = clientDB.getUsers()
@@ -91,7 +91,7 @@ export async function getAllAdminsAction() {
   try {
     const users = clientDB.getUsers()
     const admins = users
-      .filter((u: any) => u.role === "admin")
+      .filter((u: any) => u.role === "admin" || u.role === "superadmin")
       .map((u: any) => ({
         id: u.id,
         name: u.name,
@@ -102,9 +102,13 @@ export async function getAllAdminsAction() {
   }
 }
 
-export async function updateUserRoleAction(userId: string, role: "admin" | "user") {
+export async function updateUserRoleAction(userId: string, role: "superadmin" | "admin" | "user") {
   try {
-    await requireAdmin()
+    // Only admins can change roles; only superadmins can assign superadmin
+    const actor = await requireAdmin()
+    if (role === "superadmin") {
+      await requireSuperAdmin()
+    }
     const users = clientDB.getUsers()
     const user = users.find((u: any) => u.id === userId)
     if (!user) return { success: false }
@@ -137,10 +141,18 @@ export async function deleteUserAction(userId: string) {
 
 export async function updateUserAction(userId: string, updates: { email?: string; name?: string; password?: string }) {
   try {
-    await requireAdmin()
+    const actor = await requireAuth()
     const users = clientDB.getUsers()
     const user = users.find((u: any) => u.id === userId)
     if (!user) return { success: false, error: "Користувача не знайдено" }
+
+    // If changing password of an admin/superadmin, only superadmin may do it
+    if (updates.password && (user.role === "admin" || user.role === "superadmin")) {
+      if (actor.role !== "superadmin") return { success: false, error: "Доступ заборонено" }
+    } else {
+      // For other updates, admin-level access is sufficient
+      await requireAdmin()
+    }
 
     if (updates.email) user.email = updates.email
     if (updates.name) user.name = updates.name

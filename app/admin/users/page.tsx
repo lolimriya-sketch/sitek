@@ -1,9 +1,10 @@
-import { getAllUsersExceptMainAdmin } from "@/lib/auth"
+import { getAllUsersExceptMainAdmin, getCurrentUser } from "@/lib/auth"
 import { UsersTable } from "@/components/users-table"
 import { CreateUserDialog } from "@/components/create-user-dialog"
 
 export default async function UsersPage() {
   const users = getAllUsersExceptMainAdmin()
+  const currentUser = await getCurrentUser()
 
   return (
     <div className="space-y-6">
@@ -14,7 +15,7 @@ export default async function UsersPage() {
         </div>
         <CreateUserDialog />
       </div>
-      <UsersTable users={users} />
+      <UsersTable users={users} currentUser={currentUser} />
     </div>
   )
 }

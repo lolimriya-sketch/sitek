@@ -44,7 +44,14 @@ export async function requireAuth(): Promise<User> {
 
 export async function requireAdmin(): Promise<User> {
   const user = await requireAuth()
-  if (user.role !== "admin") throw new Error("Forbidden")
+  // Allow both admin and superadmin to be treated as admin for most operations
+  if (user.role !== "admin" && user.role !== "superadmin") throw new Error("Forbidden")
+  return user
+}
+
+export async function requireSuperAdmin(): Promise<User> {
+  const user = await requireAuth()
+  if (user.role !== "superadmin") throw new Error("Forbidden")
   return user
 }
 
@@ -73,7 +80,14 @@ export async function validateLogin(
 // Synchronous helpers for server-side pages that need user lists
 export function getAllUsers(): User[] {
   const users = serverDB.getUsers()
-  return users.map((u: any) => ({ id: u.id, email: u.email, name: u.name, role: u.role, createdAt: u.createdAt }))
+  return users.map((u: any) => ({
+    id: u.id,
+    email: u.email,
+    name: u.name,
+    role: u.role,
+    createdAt: u.createdAt,
+    managerId: u.managerId,
+  }))
 }
 
 export function getAllUsersExceptMainAdmin(): User[] {
