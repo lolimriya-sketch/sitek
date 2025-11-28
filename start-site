@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Simple launcher script to start the site in production mode.
+# Usage: double-click or run `./start-site` from the project root.
+
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")" && pwd)
+cd "$ROOT_DIR"
+
+echo "Starting LMS v1..."
+
+# Ensure pnpm is available
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "pnpm not found. Installing pnpm globally..."
+  npm install -g pnpm || true
+fi
+
+# Kill existing next processes that may hold locks
+echo "Stopping existing Next processes (if any)..."
+pkill -f "next dev" || true
+pkill -f "next start" || true
+pkill -f "next-server" || true
+
+# Remove dev lock if present
+if [ -f ".next/dev/lock" ]; then
+  echo "Removing stale dev lock..."
+  rm -f .next/dev/lock || true
+fi
+
+echo "Installing dependencies (if needed)..."
+pnpm install --silent || true
+
+echo "Building app (production)..."
+pnpm build
+
+echo "Starting production server... logs -> start-site.log"
+# Run in background and detach so double-click can close terminal without killing server
+nohup pnpm start > start-site.log 2>&1 &
+PID=$!
+echo "Server started (PID: $PID)"
+echo "Tailing logs (press Ctrl-C to stop tail, server will keep running)..."
+sleep 1
+tail -n +1 -f start-site.log

@@ -1,0 +1,18 @@
+[env]
+  PORT = "3000"
+
+# NOTE: Update `app` field if you will use `fly launch` to create the app.
+app = "sitek-lms"
+
+# Use Dockerfile build (we provided a Dockerfile)
+[build]
+  image = "dockerfile"
+
+[[mounts]]
+  # Volume name to create on fly.io (create it with `fly volumes create sitek-data 1 --region <region>`)
+  source = "sitek-data"
+  destination = "/app/data"
+
+# Optional: you can add release_command to run migrations on deploy
+# [deploy]
+#   release_command = "node scripts/migrate-to-supabase.js"

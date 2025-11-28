@@ -1,13 +1,1 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/admin/courses/page": "app/admin/courses/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/users/page": "app/admin/users/page.js",
-  "/api/admins/route": "app/api/admins/route.js",
-  "/api/auth/route": "app/api/auth/route.js",
-  "/api/calls/route": "app/api/calls/route.js",
-  "/dashboard/contact/page": "app/dashboard/contact/page.js",
-  "/dashboard/courses/page": "app/dashboard/courses/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/page": "app/page.js"
-}
+{}
