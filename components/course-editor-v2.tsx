@@ -452,9 +452,9 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
       case "arrow":
         return { color: "#3b82f6", thickness: 4 }
       case "tooltip":
-        return { text: "Підказка", backgroundColor: "#1f2937", textColor: "#ffffff" }
+        return { text: "Підказка", backgroundColor: "#1f2937", textColor: "#ffffff", tooltipTrigger: "hover" }
       case "hotspot":
-        return { label: "Точка", pulseColor: "#ef4444", action: "show-tooltip", tooltipText: "Натисніть тут" }
+        return { label: "Точка", pulseColor: "#ef4444", action: "show-tooltip", tooltipText: "Натисніть тут", tooltipTrigger: "click" }
       case "presentation":
         return { url: "", fileName: "Презентація", type: "pdf" }
       default:
@@ -479,7 +479,7 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
     { value: "button", label: "Кнопка переходу", icon: MousePointer },
     { value: "input", label: "Поле вводу", icon: FileText },
     { value: "presentation", label: "Презентація", icon: Presentation },
-    { value: "hotspot", label: "Hotspot", icon: Target },
+    
     { value: "arrow", label: "Стрілка", icon: ArrowRight },
     { value: "tooltip", label: "Підказка", icon: Info },
   ]
@@ -728,15 +728,7 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                           onChange={handleScreenshotUpload}
                           className="hidden"
                         />
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="gap-2"
-                        >
-                          <Upload className="h-4 w-4" />
-                          Завантажити скріншот
-                        </Button>
+                        {/* Screenshot upload button removed per UX request */}
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -1024,6 +1016,70 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                             }
                             placeholder="https://..."
                           />
+                        </div>
+                      </>
+                    )}
+
+                    {selectedElementData.type === "tooltip" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Текст підказки</Label>
+                          <Textarea
+                            value={selectedElementData.data.text}
+                            onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, text: e.target.value } })}
+                            rows={3}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Тригер підказки</Label>
+                          <Select
+                            value={(selectedElementData.data as any)?.tooltipTrigger || "hover"}
+                            onValueChange={(value) => updateElement(selectedElement!, { data: { ...selectedElementData.data, tooltipTrigger: value } })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hover">Наведіть (hover)</SelectItem>
+                              <SelectItem value="click">Клік (click)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Колір фону</Label>
+                          <Input type="color" value={selectedElementData.data.backgroundColor} onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, backgroundColor: e.target.value } })} />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Колір тексту</Label>
+                          <Input type="color" value={selectedElementData.data.textColor} onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, textColor: e.target.value } })} />
+                        </div>
+                      </>
+                    )}
+
+                    {selectedElementData.type === "hotspot" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Підказка при кліку</Label>
+                          <Textarea value={selectedElementData.data.tooltipText} onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, tooltipText: e.target.value } })} rows={2} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Тригер підказки</Label>
+                          <Select value={(selectedElementData.data as any)?.tooltipTrigger || "click"} onValueChange={(value) => updateElement(selectedElement!, { data: { ...selectedElementData.data, tooltipTrigger: value } })}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hover">Наведіть (hover)</SelectItem>
+                              <SelectItem value="click">Клік (click)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Колір імпульсу</Label>
+                          <Input type="color" value={selectedElementData.data.pulseColor} onChange={(e) => updateElement(selectedElement!, { data: { ...selectedElementData.data, pulseColor: e.target.value } })} />
                         </div>
                       </>
                     )}

@@ -1,1 +1,217 @@
-[00:00:08.653] Server  LOG      ✓ Ready in 6.4s
+[00:00:00.994] Server  LOG      ✓ Ready in 746ms
+[00:00:13.352] Server  LOG      ○ Compiling / ...
+[00:00:18.074] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:20.715] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:20.715] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:20.715] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/admin","route":"/admin"}
+[00:00:20.715] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/","r":"https://miniature-journey-pj47v4w7p54g34px.github.dev/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311598807}
+[00:00:20.715] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin color: rgb(120, 120, 120) color: inherit {"dp":"/admin","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311598808}
+[00:00:22.221] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users color: rgb(120, 120, 120) color: inherit {"dp":"/admin/users","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311600318}
+[00:00:26.206] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311604303}
+[00:01:01.508] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/profile color: rgb(120, 120, 120) color: inherit {"dp":"/admin/profile","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/profile","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311639611}
+[00:01:02.674] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users color: rgb(120, 120, 120) color: inherit {"dp":"/admin/users","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311640775}
+[00:01:04.099] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311642201}
+[00:01:05.969] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:01:06.385] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:01:06.489] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:01:06.860] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:01:06.887] Browser ERROR   [AdminCalls] Server Action loadRequests failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:01:07.037] Browser ERROR   [AdminCalls] Server Action loadRequests failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:01:12.351] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:01:12.351] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:01:12.351] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses/[id]","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764311650445}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:10.513] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:08:44.087] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:44.461] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:08:44.461] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/icon-light-32x32.png","route":"/icon-light-32x32.png"}
+[00:08:44.461] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/icon-light-32x32.png color: rgb(120, 120, 120) color: inherit {"dp":"/icon-light-32x32.png","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/icon-light-32x32.png","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312102556}
+[00:13:02.119] Server  LOG      ✓ Compiled in 200ms
+[00:13:34.467] Server  LOG      ✓ Compiled in 181ms
+[00:13:42.504] Server  LOG      ✓ Compiled in 217ms
+[00:14:01.677] Server  LOG      ✓ Compiled in 303ms
+[00:14:09.392] Server  LOG      ✓ Compiled in 199ms
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:15.831] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.201] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.201] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.510] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.510] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.797] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:16.797] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:19.877] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:20.481] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:20.481] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:20.880] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:14:20.880] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/admin/courses/course-1764220982472-c4sufs","route":"/admin/courses/[id]"}
+[00:14:20.880] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses/[id]","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312438971}
+[00:14:23.847] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:23.847] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:23.847] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:23.847] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:28.328] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:28.328] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:28.328] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:28.328] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:29.224] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:29.224] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:29.224] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:29.224] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:14:37.452] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312455531}
+[00:17:17.218] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users color: rgb(120, 120, 120) color: inherit {"dp":"/admin/users","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312615302}
+[00:17:18.185] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312616269}
+[00:17:22.537] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses/[id]/analytics","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312620622}
+[00:17:33.536] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:17:33.536] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:17:33.536] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses/[id]","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312631606}
+[00:17:35.115] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312633199}
+[00:17:51.698] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:17:51.698] Browser DEBUG   [editor] first element computed {"canvasH":600,"canvasW":800,"height":600,"id":"element-1764221446440","left":0,"top":0,"width":800}
+[00:17:51.698] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses/[id]","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses/course-1764220982472-c4sufs","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312649781}
+[00:18:05.459] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses color: rgb(120, 120, 120) color: inherit {"dp":"/admin/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312663544}
+[00:18:06.351] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users color: rgb(120, 120, 120) color: inherit {"dp":"/admin/users","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/users","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312664435}
+[00:18:15.378] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/profile color: rgb(120, 120, 120) color: inherit {"dp":"/admin/profile","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/admin/profile","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312673465}
+[00:18:21.688] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:18:21.815] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:18:21.815] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:18:21.815] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312679903}
+[00:18:27.063] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312685142}
+[00:18:27.884] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/courses color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/courses","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/courses","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312685969}
+[00:18:30.483] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.483] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.483] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.483] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.483] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/courses/course-1764220982472-c4sufs color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/courses/[id]","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/courses/course-1764220982472-c4sufs","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312688560}
+[00:18:30.713] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.713] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.713] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:30.713] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:31.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:31.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221446440","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.734] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.734] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.734] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:32.734] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:33.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:33.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.488] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.488] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221617642","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:34.819] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:35.482] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:35.482] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:36.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:36.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221813797","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.141] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.141] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.141] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.141] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.482] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:37.482] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764221948500","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:38.593] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:39.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:39.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.479] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222064884","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.952] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.953] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.953] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:40.953] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:41.481] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:41.481] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:42.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:42.480] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222216769","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.151] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.478] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:43.478] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.582] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.584] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.584] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.584] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.584] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:44.584] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:45.535] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:45.535] Browser DEBUG   [viewer] first element computed {"height":600,"id":"element-1764222515135","left":0,"naturalH":600,"naturalW":800,"scale":1,"top":0,"width":800}
+[00:18:45.823] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/completed color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/completed","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/completed","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312703908}
+[00:18:52.069] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:18:52.587] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:18:52.594] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/contact color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/contact","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/contact","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312710178}
+[00:18:52.670] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:18:52.952] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:18:52.965] Browser ERROR   [ContactAdmin] getAllAdminsAction failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:18:53.104] Browser ERROR   [ContactAdmin] getAllAdminsAction failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:18:58.735] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:18:58.970] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:18:59.060] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:18:59.378] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:18:59.380] Browser ERROR   [ContactAdmin] createCallRequestAction failed, falling back to HTTP: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:18:59.456] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:18:59.680] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:18:59.682] Browser ERROR   [ContactAdmin] createCallRequestAction failed, falling back to HTTP: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:18:59.786] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:00.003] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:00.005] Browser ERROR   [ContactAdmin] createCallRequestAction failed, falling back to HTTP: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:19:00.149] Browser ERROR   [ContactAdmin] createCallRequestAction failed, falling back to HTTP: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:19:02.154] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:02.380] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:02.533] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:04.173] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:04.400] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:04.548] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:05.722] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:05.967] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:06.035] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:06.260] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:06.262] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:06.327] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:06.547] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:06.549] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:06.697] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:07.831] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:08.099] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:08.158] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:08.380] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:08.382] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:08.529] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:08.589] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:08.833] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:08.897] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:09.138] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:09.140] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:09.277] Browser ERROR   unhandledRejection: Error: Invalid Server Actions request.
+[00:19:10.173] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/completed color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/completed","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/completed","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312728257}
+[00:19:11.050] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:11.273] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:11.275] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/contact color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard/contact","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/dashboard/contact","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312729189}
+[00:19:11.324] Server  ERROR   `x-forwarded-host` header with value `miniature-journey-pj47v4w7p54g34px-3000.app.github.dev` does not match `origin` header with value `localhost:3000` from a forwarded Server Actions request. Aborting the action.
+[00:19:11.546] Server  ERROR    ⨯ Error: Invalid Server Actions request.
+[00:19:11.549] Browser ERROR   [ContactAdmin] getAllAdminsAction failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:19:11.695] Browser ERROR   [ContactAdmin] getAllAdminsAction failed: {"digest":"2656040334@E80","environmentName":"Server","name":"Error"}
+[00:19:14.426] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:14.546] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:19:14.546] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:19:14.546] Browser LOG     %c[Vercel Web Analytics]%c [pageview] https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"https://miniature-journey-pj47v4w7p54g34px-3000.app.github.dev/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764312732633}
