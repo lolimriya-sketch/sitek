@@ -24,12 +24,31 @@ export function ContactAdmin() {
 
   useEffect(() => {
     async function loadAdmins() {
-      const result = await getAllAdminsAction()
-      if (result.success && result.admins) {
-        setAdmins(result.admins)
-        if (result.admins.length > 0) {
-          setSelectedAdminId(result.admins[0].id)
+      try {
+        const result = await getAllAdminsAction()
+        if (result && result.success && result.admins) {
+          setAdmins(result.admins)
+          if (result.admins.length > 0) {
+            setSelectedAdminId(result.admins[0].id)
+          }
+          return
         }
+      } catch (err) {
+        console.error('[ContactAdmin] getAllAdminsAction failed:', err)
+      }
+
+      // Fallback to HTTP endpoint
+      try {
+        const res = await fetch('/api/admins')
+        if (res.ok) {
+          const data = await res.json()
+          if (data && data.success && data.admins) {
+            setAdmins(data.admins)
+            if (data.admins.length > 0) setSelectedAdminId(data.admins[0].id)
+          }
+        }
+      } catch (err) {
+        console.error('[ContactAdmin] HTTP fallback fetch /api/admins failed:', err)
       }
     }
     loadAdmins()
@@ -78,8 +97,30 @@ export function ContactAdmin() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       localStreamRef.current = stream
 
-      // Create call request
-      const result = await createCallRequestAction()
+      // Create call request (pass selected admin)
+      let result
+      try {
+        result = await createCallRequestAction(selectedAdminId)
+      } catch (err) {
+        console.error('[ContactAdmin] createCallRequestAction failed, falling back to HTTP:', err)
+      }
+
+      if ((!result || !result.success) && !result?.request) {
+        // Try HTTP fallback
+        try {
+          const res = await fetch('/api/calls', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targetAdminId: selectedAdminId }),
+          })
+          if (res.ok) {
+            const data = await res.json()
+            result = data
+          }
+        } catch (err) {
+          console.error('[ContactAdmin] HTTP fallback create /api/calls failed:', err)
+        }
+      }
       if (result.success && result.request) {
         setCallId(result.request.id)
         setCalling(true)

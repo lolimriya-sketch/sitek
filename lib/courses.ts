@@ -1,9 +1,15 @@
 import type { Course, CourseAssignment } from "./types"
-import { clientDB } from "./db"
+import { clientDB, serverDB } from "./db"
+
+function getDB() {
+  if (typeof window === "undefined") return serverDB
+  return clientDB
+}
 
 // Course Assignments
 export function assignCourse(courseId: string, userId: string, assignedBy: string): CourseAssignment {
-  const assignments = clientDB.getAssignments()
+  const db = getDB()
+  const assignments = db.getAssignments()
 
   const id = `assignment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   const assignment: CourseAssignment = {
@@ -15,56 +21,64 @@ export function assignCourse(courseId: string, userId: string, assignedBy: strin
   }
 
   assignments.push(assignment)
-  clientDB.setAssignments(assignments)
+  db.setAssignments(assignments)
   return assignment
 }
 
 export function unassignCourse(courseId: string, userId: string): boolean {
-  const assignments = clientDB.getAssignments()
+  const db = getDB()
+  const assignments = db.getAssignments()
   const filtered = assignments.filter((a: CourseAssignment) => !(a.courseId === courseId && a.userId === userId))
 
   if (filtered.length === assignments.length) return false
-  clientDB.setAssignments(filtered)
+  db.setAssignments(filtered)
   return true
 }
 
 export function getUserAssignedCourses(userId: string): Course[] {
-  const assignments = clientDB.getAssignments()
+  const db = getDB()
+  const assignments = db.getAssignments()
   const userAssignments = assignments.filter((a: CourseAssignment) => a.userId === userId)
 
-  const courses = clientDB.getCourses()
+  const courses = db.getCourses()
   return userAssignments
     .map((a: CourseAssignment) => courses.find((c: any) => c.id === a.courseId))
     .filter((c: any): c is Course => c !== undefined && c.published)
 }
 
 export function getCourseAssignments(courseId: string): CourseAssignment[] {
-  const assignments = clientDB.getAssignments()
+  const db = getDB()
+  const assignments = db.getAssignments()
   return assignments.filter((a: CourseAssignment) => a.courseId === courseId)
 }
 
 export function isUserAssignedToCourse(userId: string, courseId: string): boolean {
-  const assignments = clientDB.getAssignments()
+  const db = getDB()
+  const assignments = db.getAssignments()
   return assignments.some((a: CourseAssignment) => a.userId === userId && a.courseId === courseId)
 }
 
 // Course Progress
 export function getAllCourseProgress(courseId: string): any[] {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   return progressList.filter((p: any) => p.courseId === courseId)
 }
 
 export function getAllCourses(): Course[] {
-  return clientDB.getCourses()
+  const db = getDB()
+  return db.getCourses()
 }
 
 export function getCourseById(id: string): Course | null {
-  const courses = clientDB.getCourses()
+  const db = getDB()
+  const courses = db.getCourses()
   return courses.find((c: Course) => c.id === id) || null
 }
 
 export function createCourse(title: string, description: string, createdBy: string): Course {
-  const courses = clientDB.getCourses()
+  const db = getDB()
+  const courses = db.getCourses()
 
   const id = `course-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   const course: Course = {
@@ -79,7 +93,7 @@ export function createCourse(title: string, description: string, createdBy: stri
   }
 
   courses.push(course)
-  clientDB.setCourses(courses)
+  db.setCourses(courses)
   return course
 }
 
@@ -87,7 +101,8 @@ export function updateCourse(
   id: string,
   updates: Partial<Omit<Course, "id" | "createdAt" | "createdBy">>,
 ): Course | null {
-  const courses = clientDB.getCourses()
+  const db = getDB()
+  const courses = db.getCourses()
   const index = courses.findIndex((c: Course) => c.id === id)
   if (index === -1) return null
 
@@ -98,25 +113,27 @@ export function updateCourse(
   }
 
   courses[index] = updated
-  clientDB.setCourses(courses)
+  db.setCourses(courses)
   return updated
 }
 
 export function deleteCourse(id: string): boolean {
-  const courses = clientDB.getCourses()
+  const db = getDB()
+  const courses = db.getCourses()
   const filtered = courses.filter((c: Course) => c.id !== id)
   if (filtered.length === courses.length) return false
 
-  clientDB.setCourses(filtered)
+  db.setCourses(filtered)
 
-  const assignments = clientDB.getAssignments()
+  const assignments = db.getAssignments()
   const filteredAssignments = assignments.filter((a: CourseAssignment) => a.courseId !== id)
-  clientDB.setAssignments(filteredAssignments)
+  db.setAssignments(filteredAssignments)
 
   return true
 }
 
 export function getPublishedCourses(): Course[] {
-  const courses = clientDB.getCourses()
+  const db = getDB()
+  const courses = db.getCourses()
   return courses.filter((c: Course) => c.published)
 }

@@ -86,6 +86,7 @@ export interface CallRequest {
   id: string
   userId: string
   userName: string
+  targetAdminId?: string
   createdAt: string
   status: "pending" | "accepted" | "rejected" | "ended"
 }

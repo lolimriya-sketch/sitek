@@ -82,4 +82,96 @@ export const clientDB = {
     }
   },
 }
-export const serverDB = clientDB; // Додаємо alias для serverDB
+// Server-side implementation: read/write `data/db.json`
+let serverImpl: any = null
+
+if (typeof window === "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const fs = require("fs")
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const path = require("path")
+  const dbPath = path.join(process.cwd(), "data", "db.json")
+
+  function readDb(): any {
+    try {
+      const raw = fs.readFileSync(dbPath, "utf8")
+      return JSON.parse(raw)
+    } catch (e) {
+      return { users: [], courses: [], progress: [], assignments: [], calls: [] }
+    }
+  }
+
+  function writeDb(data: any) {
+    try {
+      fs.writeFileSync(dbPath, JSON.stringify(data, null, 2))
+    } catch (e) {
+      // ignore write errors in dev
+    }
+  }
+
+  serverImpl = {
+    getUsers() {
+      const db = readDb()
+      return db.users || []
+    },
+    setUsers(users: any[]) {
+      const db = readDb()
+      db.users = users
+      writeDb(db)
+    },
+    getCourses() {
+      const db = readDb()
+      return db.courses || []
+    },
+    setCourses(courses: any[]) {
+      const db = readDb()
+      db.courses = courses
+      writeDb(db)
+    },
+    getProgress() {
+      const db = readDb()
+      return db.progress || []
+    },
+    setProgress(progress: any[]) {
+      const db = readDb()
+      db.progress = progress
+      writeDb(db)
+    },
+    getAssignments() {
+      const db = readDb()
+      return db.assignments || []
+    },
+    setAssignments(assignments: any[]) {
+      const db = readDb()
+      db.assignments = assignments
+      writeDb(db)
+    },
+    getCalls() {
+      const db = readDb()
+      return db.calls || []
+    },
+    setCalls(calls: any[]) {
+      const db = readDb()
+      db.calls = calls
+      writeDb(db)
+    },
+    initializeDefaultAdmin() {
+      const users = this.getUsers()
+      if (users.length === 0) {
+        const defaultAdmin = {
+          id: "admin-1",
+          email: "admin@system.com",
+          name: "Головний Адміністратор",
+          role: "admin",
+          password: "admin123",
+          createdAt: new Date().toISOString(),
+        }
+        this.setUsers([defaultAdmin])
+      }
+    },
+  }
+} else {
+  serverImpl = clientDB
+}
+
+export const serverDB = serverImpl

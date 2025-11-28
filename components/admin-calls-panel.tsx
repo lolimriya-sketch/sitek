@@ -26,9 +26,27 @@ export function AdminCallsPanel() {
   }, [])
 
   async function loadRequests() {
-    const result = await getPendingCallRequestsAction()
-    if (result.success && result.requests) {
-      setRequests(result.requests)
+    try {
+      const result = await getPendingCallRequestsAction()
+      if (result && result.success && result.requests) {
+        setRequests(result.requests)
+        return
+      }
+    } catch (err) {
+      console.error("[AdminCalls] Server Action loadRequests failed:", err)
+    }
+
+    // Fallback to HTTP API
+    try {
+      const res = await fetch("/api/calls")
+      if (res.ok) {
+        const data = await res.json()
+        setRequests(data || [])
+      } else {
+        console.warn("[AdminCalls] /api/calls returned non-ok", res.status)
+      }
+    } catch (err) {
+      console.error("[AdminCalls] HTTP fallback loadRequests failed:", err)
     }
   }
 
@@ -39,7 +57,20 @@ export function AdminCallsPanel() {
       localStreamRef.current = stream
 
       // Update call status
-      await updateCallStatusAction(request.id, "accepted")
+      try {
+        await updateCallStatusAction(request.id, "accepted")
+      } catch (err) {
+        console.error("[AdminCalls] updateCallStatusAction failed, falling back to HTTP:", err)
+        try {
+          await fetch(`/api/calls`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: request.id, status: "accepted" }),
+          })
+        } catch (ferr) {
+          console.error("[AdminCalls] HTTP fallback update failed:", ferr)
+        }
+      }
       setActiveCall(request)
 
       // Initialize WebRTC
@@ -92,7 +123,20 @@ export function AdminCallsPanel() {
   }
 
   async function rejectCall(request: CallRequest) {
-    await updateCallStatusAction(request.id, "rejected")
+    try {
+      await updateCallStatusAction(request.id, "rejected")
+    } catch (err) {
+      console.error("[AdminCalls] updateCallStatusAction(reject) failed, falling back to HTTP:", err)
+      try {
+        await fetch(`/api/calls`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: request.id, status: "rejected" }),
+        })
+      } catch (ferr) {
+        console.error("[AdminCalls] HTTP fallback reject failed:", ferr)
+      }
+    }
     toast({
       title: "Дзвінок відхилено",
     })
@@ -121,7 +165,20 @@ export function AdminCallsPanel() {
     }
 
     if (activeCall) {
-      await updateCallStatusAction(activeCall.id, "ended")
+      try {
+        await updateCallStatusAction(activeCall.id, "ended")
+      } catch (err) {
+        console.error("[AdminCalls] updateCallStatusAction(end) failed, falling back to HTTP:", err)
+        try {
+          await fetch(`/api/calls`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: activeCall.id, status: "ended" }),
+          })
+        } catch (ferr) {
+          console.error("[AdminCalls] HTTP fallback end failed:", ferr)
+        }
+      }
     }
 
     setActiveCall(null)

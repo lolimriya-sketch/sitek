@@ -4,12 +4,13 @@ import type { CallRequest } from "./types"
 const callRequests: Map<string, CallRequest> = new Map()
 const activeConnections: Map<string, any> = new Map()
 
-export function createCallRequest(userId: string, userName: string): CallRequest {
+export function createCallRequest(userId: string, userName: string, targetAdminId?: string): CallRequest {
   const id = `call-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   const request: CallRequest = {
     id,
     userId,
     userName,
+    targetAdminId,
     createdAt: new Date().toISOString(),
     status: "pending",
   }

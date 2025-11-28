@@ -21,6 +21,8 @@ export async function startCourseAction(userId: string, courseId: string) {
     const progress = startCourse(userId, courseId)
     return { success: true, progressId: progress.id }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] startCourseAction error', new Error('startCourseAction failed'))
     return { success: false, error: "Помилка" }
   }
 }
@@ -36,6 +38,8 @@ export async function completeCourseAction(progressId: string, duration: number,
     revalidatePath("/dashboard/completed")
     return { success: true, progress }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] completeCourseAction error', new Error('completeCourseAction failed'))
     return { success: false, error: "Помилка" }
   }
 }
@@ -50,6 +54,8 @@ export async function getCompletedCoursesAction() {
     const courses = getCompletedCourses(user.id)
     return { success: true, courses }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] getCompletedCoursesAction error', new Error('getCompletedCoursesAction failed'))
     return { success: false, error: "Помилка" }
   }
 }
@@ -71,6 +77,8 @@ export async function trackInteractionAction(
     const progress = addInteraction(progressId, sceneId, elementId, elementType, action, value)
     return { success: true, progress }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] trackInteractionAction error', new Error('trackInteractionAction failed'))
     return { success: false, error: "Помилка" }
   }
 }
@@ -85,6 +93,8 @@ export async function getCourseAnalyticsAction(courseId: string) {
     const progress = getAllCourseProgress(courseId)
     return { success: true, progress }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] getCourseAnalyticsAction error', new Error('getCourseAnalyticsAction failed'))
     return { success: false, error: "Помилка" }
   }
 }
@@ -100,6 +110,8 @@ export async function resetProgressAction(progressId: string) {
     revalidatePath("/admin/courses")
     return { success }
   } catch {
+    // eslint-disable-next-line no-console
+    console.error('[actions/progress] resetProgressAction error', new Error('resetProgressAction failed'))
     return { success: false, error: "Помилка" }
   }
 }

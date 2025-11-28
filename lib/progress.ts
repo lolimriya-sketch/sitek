@@ -1,8 +1,14 @@
 import type { CourseProgress, UserInteraction } from "./types"
-import { clientDB } from "./db"
+import { clientDB, serverDB } from "./db"
+
+function getDB() {
+  if (typeof window === "undefined") return serverDB
+  return clientDB
+}
 
 export function startCourse(userId: string, courseId: string, initialScene?: string): CourseProgress {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
 
   const id = `progress-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   const newProgress: CourseProgress = {
@@ -18,12 +24,13 @@ export function startCourse(userId: string, courseId: string, initialScene?: str
   }
 
   progressList.push(newProgress)
-  clientDB.setProgress(progressList)
+  db.setProgress(progressList)
   return newProgress
 }
 
 export function updateProgress(progressId: string, updates: Partial<CourseProgress>): CourseProgress | null {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   const index = progressList.findIndex((p: CourseProgress) => p.id === progressId)
   if (index === -1) return null
 
@@ -33,7 +40,7 @@ export function updateProgress(progressId: string, updates: Partial<CourseProgre
   }
 
   progressList[index] = updated
-  clientDB.setProgress(progressList)
+  db.setProgress(progressList)
   return updated
 }
 
@@ -45,7 +52,8 @@ export function addInteraction(
   action: string,
   value?: any,
 ): CourseProgress | null {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   const index = progressList.findIndex((p: CourseProgress) => p.id === progressId)
   if (index === -1) return null
 
@@ -65,7 +73,7 @@ export function addInteraction(
   }
 
   progressList[index] = updated
-  clientDB.setProgress(progressList)
+  db.setProgress(progressList)
   return updated
 }
 
@@ -79,17 +87,20 @@ export function completeCourse(progressId: string, duration: number, tabExits: n
 }
 
 export function getUserProgress(userId: string): CourseProgress[] {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   return progressList.filter((p: CourseProgress) => p.userId === userId)
 }
 
 export function getCompletedCourses(userId: string): CourseProgress[] {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   return progressList.filter((p: CourseProgress) => p.userId === userId && p.status === "completed")
 }
 
 export function getCourseProgress(userId: string, courseId: string): CourseProgress | null {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   return (
     progressList.find(
       (p: CourseProgress) => p.userId === userId && p.courseId === courseId && p.status === "in-progress",
@@ -98,15 +109,17 @@ export function getCourseProgress(userId: string, courseId: string): CourseProgr
 }
 
 export function getAllCourseProgress(courseId: string): CourseProgress[] {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   return progressList.filter((p: CourseProgress) => p.courseId === courseId)
 }
 
 export function resetProgress(progressId: string): boolean {
-  const progressList = clientDB.getProgress()
+  const db = getDB()
+  const progressList = db.getProgress()
   const filtered = progressList.filter((p: CourseProgress) => p.id !== progressId)
   if (filtered.length === progressList.length) return false
 
-  clientDB.setProgress(filtered)
+  db.setProgress(filtered)
   return true
 }

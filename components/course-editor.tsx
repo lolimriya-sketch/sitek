@@ -62,6 +62,7 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
+  const courseFileRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   const bgImgRef = useRef<HTMLImageElement | null>(null)
   const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null)
@@ -115,6 +116,82 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
       toast({ variant: "destructive", title: "Помилка", description: String(err) })
     }
     setSaving(false)
+  }
+
+  async function handleCourseExport() {
+    if (!course) return
+    const dataStr = JSON.stringify(course, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `course-${course.id}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleCourseFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      try {
+        const text = ev.target?.result as string
+        const parsed = JSON.parse(text)
+
+        // If array -> replace whole courses list
+        if (Array.isArray(parsed)) {
+          const res = await fetch('/api/courses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courses: parsed }),
+          })
+          if (res.ok) {
+            toast({ title: 'Успіх', description: 'Список курсів замінено' })
+            router.refresh()
+          } else {
+            const err = await res.json()
+            toast({ variant: 'destructive', title: 'Помилка', description: err.error || 'Не вдалося імпортувати' })
+          }
+          return
+        }
+
+        // single course object
+        if (parsed.id) {
+          // try update
+          const putRes = await fetch('/api/courses', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: parsed.id, updates: parsed }),
+          })
+          if (putRes.ok) {
+            toast({ title: 'Успіх', description: 'Курс оновлено' })
+            router.refresh()
+            return
+          }
+        }
+
+        // create new course
+        const postRes = await fetch('/api/courses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(parsed),
+        })
+        if (postRes.ok) {
+          const body = await postRes.json()
+          toast({ title: 'Успіх', description: 'Курс імпортовано' })
+          router.refresh()
+        } else {
+          const err = await postRes.json()
+          toast({ variant: 'destructive', title: 'Помилка', description: err.error || 'Не вдалося імпортувати' })
+        }
+      } catch (err: any) {
+        toast({ variant: 'destructive', title: 'Помилка', description: String(err) })
+      }
+    }
+    reader.readAsText(file)
+    // reset input
+    if (courseFileRef.current) courseFileRef.current.value = ''
   }
 
   function deleteScene(index: number) {
@@ -611,6 +688,28 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                 />
               </div>
             </div>
+              <div className="mt-6 border-t pt-4">
+                <h4 className="font-semibold mb-2">Експорт / Імпорт курсу</h4>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={handleCourseExport} className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Експорт курсу
+                  </Button>
+
+                  <input
+                    ref={courseFileRef}
+                    type="file"
+                    accept="application/json"
+                    onChange={handleCourseFileChange}
+                    className="hidden"
+                  />
+
+                  <Button variant="outline" size="sm" onClick={() => courseFileRef.current?.click()} className="gap-2">
+                    <Upload className="h-4 w-4" />
+                    Імпорт курсу (JSON)
+                  </Button>
+                </div>
+              </div>
           </Card>
         </TabsContent>
 
@@ -1380,10 +1479,10 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                         <label className="inline-flex items-center gap-2">
                           <input
                             type="checkbox"
-                            checked={selectedElementData.backgroundColor === "transparent"}
+                            checked={(selectedElementData.data as any)?.backgroundColor === "transparent"}
                             onChange={(e) =>
                               updateElement(selectedElement!, {
-                                backgroundColor: e.target.checked ? "transparent" : "#ffffff",
+                                data: { ...(selectedElementData.data || {}), backgroundColor: e.target.checked ? "transparent" : "#ffffff" },
                               })
                             }
                           />
@@ -1393,17 +1492,17 @@ export function CourseEditor({ course: initialCourse }: CourseEditorProps) {
                       <div className="flex items-center gap-3 mt-2">
                         <Input
                           type="color"
-                          value={selectedElementData.backgroundColor === "transparent" ? "#ffffff" : (selectedElementData.backgroundColor || "#ffffff")}
+                          value={(selectedElementData.data as any)?.backgroundColor === "transparent" ? "#ffffff" : ((selectedElementData.data as any)?.backgroundColor || "#ffffff")}
                           onChange={(e) =>
                             updateElement(selectedElement!, {
-                              backgroundColor: e.target.value,
+                              data: { ...(selectedElementData.data || {}), backgroundColor: e.target.value },
                             })
                           }
-                          disabled={selectedElementData.backgroundColor === "transparent"}
+                          disabled={(selectedElementData.data as any)?.backgroundColor === "transparent"}
                           className="w-16 h-10"
                         />
                         <span className="text-xs text-muted-foreground">
-                          {selectedElementData.backgroundColor === "transparent" ? "Без фону" : selectedElementData.backgroundColor || "#ffffff"}
+                          {(selectedElementData.data as any)?.backgroundColor === "transparent" ? "Без фону" : (selectedElementData.data as any)?.backgroundColor || "#ffffff"}
                         </span>
                       </div>
                     </div>
