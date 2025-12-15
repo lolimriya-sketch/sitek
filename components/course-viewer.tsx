@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, CheckCircle, Clock, Eye, EyeOff, Target, Presentation } from "lucide-react"
+import { ArrowLeft, CheckCircle, Clock, Eye, EyeOff, Target, Presentation, Maximize2, Minimize2 } from "lucide-react"
 import ArrowIcon from "@/components/arrow-icon"
 import Link from "next/link"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -26,6 +26,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const bgImgRef = useRef<HTMLImageElement | null>(null)
+  const canvasRef = useRef<HTMLDivElement | null>(null)
   const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null)
   const [scale, setScale] = useState(1)
   const [startTime] = useState<number>(Date.now())
@@ -40,6 +41,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
   const [showPresentation, setShowPresentation] = useState<{ elementId: string; url: string } | null>(null)
   const [transitionButtonClicked, setTransitionButtonClicked] = useState(false)
   const [animatedTooltip, setAnimatedTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   const currentScene = course.scenes?.[currentSceneIndex]
   const totalScenes = course.scenes?.length || 0
@@ -82,28 +84,58 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
     }
   }, [userId, course.id, startTime])
 
+  // Fullscreen change listener
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener("fullscreenchange", onFsChange)
+    return () => document.removeEventListener("fullscreenchange", onFsChange)
+  }, [])
+
+  async function enterFullscreen() {
+    if (containerRef.current && !document.fullscreenElement) {
+      try {
+        // request fullscreen on the container element
+        // @ts-ignore
+        await containerRef.current.requestFullscreen()
+      } catch (err) {
+        // ignore
+      }
+    }
+  }
+
+  async function exitFullscreen() {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen()
+      } catch (err) {
+        // ignore
+      }
+    }
+  }
+
   // measure canvas size and calculate dimensions to fit viewport
   useEffect(() => {
     function measure() {
-      if (!containerRef.current) return
-      
+      if (!canvasRef.current && !containerRef.current) return
       // Get available space in viewport
-      const availableHeight = window.innerHeight - 220 // account for header/footer controls
-      const availableWidth = window.innerWidth - 40 // small margin
-      
+      // In fullscreen we want to use the full viewport and allow scaling up to cover
+      const availableHeight = isFullscreen ? window.innerHeight : window.innerHeight - 220 // account for header/footer controls when not fullscreen
+      const availableWidth = isFullscreen ? window.innerWidth : window.innerWidth - 40 // small margin when not fullscreen
+
       // Get natural image dimensions from scene or use defaults
       const naturalW = (currentScene as any)?.screenshotNaturalWidth || 800
       const naturalH = (currentScene as any)?.screenshotNaturalHeight || 600
-      
-      // Calculate dimensions to fit both width and height without distortion
+
+      // When not fullscreen use 'contain' fitting (don't enlarge beyond natural size)
+      // When fullscreen use 'cover' fitting (fill whole viewport, may crop) and allow scaling up
       const ratioByWidth = availableWidth / naturalW
       const ratioByHeight = availableHeight / naturalH
-      const fitRatio = Math.min(ratioByWidth, ratioByHeight, 1) // don't enlarge beyond natural size
-      
-      // Calculate actual display dimensions (not scaled transform, but actual size)
+      const fitRatio = isFullscreen ? Math.max(ratioByWidth, ratioByHeight) : Math.min(ratioByWidth, ratioByHeight, 1)
+
+      // Calculate display size from natural * fitRatio so we can center the canvas
       const displayW = Math.round(naturalW * fitRatio)
       const displayH = Math.round(naturalH * fitRatio)
-      
+
       setScale(fitRatio)
       setCanvasSize({ width: displayW, height: displayH })
     }
@@ -111,20 +143,18 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
     measure()
     window.addEventListener("resize", measure)
     return () => window.removeEventListener("resize", measure)
-  }, [currentSceneIndex])
+  }, [currentSceneIndex, isFullscreen, currentScene?.screenshotNaturalWidth, currentScene?.screenshotNaturalHeight])
 
   function handleBackgroundImageLoad(img: HTMLImageElement) {
-    // determine canvas display size based on container width and image natural aspect
-    const rect = containerRef.current?.getBoundingClientRect()
+    // determine canvas display size based on canvas element (inner centered frame)
+    const rect = canvasRef.current?.getBoundingClientRect()
     const containerWidth = rect?.width || img.naturalWidth || 800
-    const naturalW = img.naturalWidth || containerWidth
-    const naturalH = img.naturalHeight || Math.round(naturalW * 0.6)
-    const height = Math.round((containerWidth * naturalH) / naturalW)
-    setCanvasSize({ width: containerWidth, height })
+    const containerHeight = rect?.height || img.naturalHeight || Math.round(containerWidth * 0.6)
+    setCanvasSize({ width: Math.round(containerWidth), height: Math.round(containerHeight) })
 
     // debug: print canvas size for diagnostics
     // eslint-disable-next-line no-console
-    console.debug("[viewer] handleBackgroundImageLoad", { courseId: course.id, containerWidth, naturalW, naturalH, height })
+    console.debug("[viewer] handleBackgroundImageLoad", { courseId: course.id, containerWidth, naturalW: img.naturalWidth, naturalH: img.naturalHeight, containerHeight })
   }
 
   useEffect(() => {
@@ -337,6 +367,12 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
               {isTabActive ? <Eye className="h-4 w-4 text-green-500" /> : <EyeOff className="h-4 w-4 text-destructive" />}
               <span className="text-xs text-muted-foreground">Виходи: {tabExits}</span>
             </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" onClick={() => (isFullscreen ? exitFullscreen() : enterFullscreen())} className="gap-2">
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                <span className="text-xs">{isFullscreen ? "Вийти" : "На весь екран"}</span>
+              </Button>
+            </div>
             <div className="text-sm text-muted-foreground">
               Сцена {currentSceneIndex + 1} / {totalScenes}
             </div>
@@ -348,18 +384,48 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
         </div>
       </div>
 
+      {/* Floating close button visible only in fullscreen */}
+      {isFullscreen && (
+        <div className="fixed top-4 right-4 z-50">
+          <Button variant="destructive" size="sm" onClick={() => exitFullscreen()}>
+            Закрити
+          </Button>
+        </div>
+      )}
+
       {/* Canvas - fit to viewport without scroll */}
       <div className="flex-1 flex items-center justify-center overflow-hidden bg-muted p-4">
         {currentScene && (
           <div
             ref={containerRef}
-            className="relative bg-white shadow-lg"
-            style={{
+            className={`relative flex items-center justify-center`}
+            style={isFullscreen ? { position: 'fixed' as const, inset: 0, width: '100vw', height: '100vh', overflow: 'hidden', zIndex: 50 } : {
               width: `${canvasSize?.width || 800}px`,
               height: `${canvasSize?.height || 600}px`,
               overflow: 'hidden',
             }}
           >
+            <div
+              ref={canvasRef}
+              className={`relative ${isFullscreen ? 'bg-black shadow-none rounded-none' : 'bg-white shadow-lg'}`}
+              style={
+                isFullscreen
+                  ? {
+                      width: canvasSize ? `${canvasSize.width}px` : '100%',
+                      height: canvasSize ? `${canvasSize.height}px` : '100%',
+                      position: 'absolute' as const,
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      overflow: 'hidden',
+                    }
+                  : {
+                      width: `${canvasSize?.width || 800}px`,
+                      height: `${canvasSize?.height || 600}px`,
+                      overflow: 'hidden',
+                    }
+              }
+            >
             {/* Scene background/screenshot */}
             {currentScene.screenshot && (
               <img
@@ -368,7 +434,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                 alt={currentScene.name}
                 onLoad={(e) => handleBackgroundImageLoad(e.currentTarget)}
                 className="absolute left-0 top-0 w-full h-full pointer-events-none"
-                style={{ objectFit: "contain", objectPosition: "center" }}
+                style={{ objectFit: isFullscreen ? "cover" : "contain", objectPosition: "center" }}
               />
             )}
 
@@ -389,7 +455,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
               let imgW = canvasSize?.width || naturalW
               let imgH = canvasSize?.height || naturalH
               try {
-                const containerRect = containerRef.current?.getBoundingClientRect()
+                const containerRect = canvasRef.current?.getBoundingClientRect()
                 const imgRect = bgImgRef.current?.getBoundingClientRect()
                 if (imgRect && containerRect) {
                   imgLeft = imgRect.left - containerRect.left
@@ -404,7 +470,7 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
               // Use uniform scale (min of both axes) to preserve aspect ratio and prevent distortion
               const scaleX = imgW / naturalW || 1
               const scaleY = imgH / naturalH || 1
-              const scale = Math.min(scaleX, scaleY)
+              const scale = isFullscreen ? Math.max(scaleX, scaleY) : Math.min(scaleX, scaleY)
 
               const left = Math.round(imgLeft + naturalLeft * scale)
               const top = Math.round(imgTop + naturalTop * scale)
@@ -607,6 +673,8 @@ export function CourseViewer({ course, userId }: CourseViewerProps) {
                 )}
               </div>
             )})}
+
+            </div>
 
             {animatedTooltip && (
               <div

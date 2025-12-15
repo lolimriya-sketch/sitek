@@ -1,13 +1,7 @@
 {
   "node": {
-    "0006944e9cc31721d3640b9cffa41ff202aca30888": {
+    "00b472e14253c99fd90bd1013e97e7ad62a977d521": {
       "workers": {
-        "app/admin/courses/[id]/analytics/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/courses/[id]/analytics/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "getPendingCallRequestsAction",
-          "filename": "app/actions/calls.ts"
-        },
         "app/admin/courses/[id]/page": {
           "moduleId": "[project]/.next-internal/server/app/admin/courses/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
@@ -40,7 +34,6 @@
         }
       },
       "layer": {
-        "app/admin/courses/[id]/analytics/page": "action-browser",
         "app/admin/courses/[id]/page": "action-browser",
         "app/admin/courses/page": "action-browser",
         "app/admin/page": "action-browser",
@@ -50,14 +43,8 @@
       "filename": "app/actions/calls.ts",
       "exportedName": "getPendingCallRequestsAction"
     },
-    "6059cfeddac3376c1f0d9a258c1ddd7e132eee22c9": {
+    "60c3e40f5797607e53e34bfe58f23a7fafa7d946d8": {
       "workers": {
-        "app/admin/courses/[id]/analytics/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/courses/[id]/analytics/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "updateCallStatusAction",
-          "filename": "app/actions/calls.ts"
-        },
         "app/admin/courses/[id]/page": {
           "moduleId": "[project]/.next-internal/server/app/admin/courses/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
@@ -87,72 +74,19 @@
           "async": false,
           "exportedName": "updateCallStatusAction",
           "filename": "app/actions/calls.ts"
-        },
-        "app/dashboard/contact/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/contact/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "updateCallStatusAction",
-          "filename": "app/actions/calls.ts"
         }
       },
       "layer": {
-        "app/admin/courses/[id]/analytics/page": "action-browser",
         "app/admin/courses/[id]/page": "action-browser",
         "app/admin/courses/page": "action-browser",
         "app/admin/page": "action-browser",
         "app/admin/profile/page": "action-browser",
-        "app/admin/users/page": "action-browser",
-        "app/dashboard/contact/page": "action-browser"
+        "app/admin/users/page": "action-browser"
       },
       "filename": "app/actions/calls.ts",
       "exportedName": "updateCallStatusAction"
-    },
-    "40f6e3871891c4b5c3b3fd5a4e955dbce1f28ddb2f": {
-      "workers": {
-        "app/dashboard/contact/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/contact/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "createCallRequestAction",
-          "filename": "app/actions/calls.ts"
-        }
-      },
-      "layer": {
-        "app/dashboard/contact/page": "action-browser"
-      },
-      "filename": "app/actions/calls.ts",
-      "exportedName": "createCallRequestAction"
-    },
-    "4004cdb3b4071f1f150606ab7de4547f27bf062574": {
-      "workers": {
-        "app/dashboard/contact/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/contact/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "getCallRequestAction",
-          "filename": "app/actions/calls.ts"
-        }
-      },
-      "layer": {
-        "app/dashboard/contact/page": "action-browser"
-      },
-      "filename": "app/actions/calls.ts",
-      "exportedName": "getCallRequestAction"
-    },
-    "0024291ff17020299a89fa8835328d8ee70d95b2e4": {
-      "workers": {
-        "app/dashboard/contact/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/contact/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/calls.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "getAllAdminsAction",
-          "filename": "app/actions/auth.ts"
-        }
-      },
-      "layer": {
-        "app/dashboard/contact/page": "action-browser"
-      },
-      "filename": "app/actions/auth.ts",
-      "exportedName": "getAllAdminsAction"
     }
   },
   "edge": {},
-  "encryptionKey": "Mr+L1pEg7sSO2+B5x4+w1khsfK2OV6eznoAEKDCHf3k="
+  "encryptionKey": "PoFXEqbqV0SqF0/WwzDP5sJFvf57iDjFj6dhQF83VIg="
 }

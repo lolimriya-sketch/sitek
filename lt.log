@@ -1,0 +1,14 @@
+nohup: ignoring input
+your url is: https://hip-rat/home/codespace/.npm/_npx/5f9a7646bab52d8d/node_modules/localtunnel/bin/lt.js:81
+    throw err;
+    ^
+
+Error: connection refused: localtunnel.me:22127 (check your firewall settings)
+    at Socket.<anonymous> (/home/codespace/.npm/_npx/5f9a7646bab52d8d/node_modules/localtunnel/lib/TunnelCluster.js:52:11)
+    at Socket.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+Node.js v22.21.1
+ode.js v22.21.1
